@@ -1,12 +1,14 @@
 <?php
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the COMMON DEVELOPMENT AND DISTRIBUTION LICENSE
-#
-# You should have received a copy of the
-# COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0
-# along with this program.  If not, see http://www.sun.com/cddl/cddl.html
-
-# 2019 https://www.bananas-playground.net/projekt/selfpaste
+/**
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the COMMON DEVELOPMENT AND DISTRIBUTION LICENSE
+ *
+ * You should have received a copy of the
+ * COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0
+ * along with this program.  If not, see http://www.sun.com/cddl/cddl.html
+ *
+ * 2019 https://www.bananas-playground.net/projekt/selfpaste
+ */
 
 # global debug setting
 define('DEBUG',true);
@@ -37,5 +39,15 @@ else {
     ini_set('display_errors',false);
 }
 
+# static helper class
+require 'lib/summoner.class.php';
+
+if(isset($_GET['s']) && !empty($_GET['s'])) {
+    $_short = trim($_GET['s']);
+    $_short = Summoner::validate($_short,'nospace') ? $_short : "";
+}
+
 # header information
 header('Content-type: text/html; charset=UTF-8');
+
+var_dump($_SERVER);
