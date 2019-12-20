@@ -24,7 +24,6 @@ date_default_timezone_set('Europe/Berlin');
 # check request
 $_urlToParse = filter_var($_SERVER['QUERY_STRING'],FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
 if(!empty($_urlToParse)) {
-    # see http://de2.php.net/manual/en/regexp.reference.unicode.php
     if(preg_match('/[\p{C}\p{M}\p{Sc}\p{Sk}\p{So}\p{Zl}\p{Zp}]/u',$_urlToParse) === 1) {
         die('Malformed request. Make sure you know what you are doing.');
     }
@@ -42,12 +41,26 @@ else {
 # static helper class
 require 'lib/summoner.class.php';
 
+$_short = false;
 if(isset($_GET['s']) && !empty($_GET['s'])) {
     $_short = trim($_GET['s']);
-    $_short = Summoner::validate($_short,'nospace') ? $_short : "";
+    $_short = Summoner::validate($_short,'nospace') ? $_short : false;
+}
+
+$contentType = 'Content-type: text/html; charset=UTF-8';
+$contentBody = 'welcome';
+
+if(!empty($_short)) {
+
 }
 
 # header information
-header('Content-type: text/html; charset=UTF-8');
-
-var_dump($_SERVER);
+header($contentType);
+if(file_exists('view/'.$contentBody.'.inc.php')) {
+    require_once 'view/'.$contentBody.'.inc.php';
+}
+else {
+    error_log('Content body file missing. '.var_export($_SERVER,true),3,'./logs/error.log');
+    http_response_code(400);
+    die('Well, something went wrong...');
+}
