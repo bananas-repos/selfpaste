@@ -47,12 +47,22 @@ if(isset($_GET['s']) && !empty($_GET['s'])) {
     $_short = Summoner::validate($_short,'nospace') ? $_short : false;
 }
 
+$_create = false;
+if(isset($_POST['c']) && !empty($_GET['s'])) {
+    $_create = trim($_GET['s']);
+    $_create = Summoner::validate($_short,'nospace') ? $_short : false;
+}
+
 $contentType = 'Content-type: text/html; charset=UTF-8';
 $contentBody = 'welcome';
 
 if(!empty($_short)) {
 
 }
+
+var_dump($_POST);
+var_dump($_FILES);
+var_dump($_SERVER);
 
 # header information
 header($contentType);
