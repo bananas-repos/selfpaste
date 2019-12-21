@@ -1,2 +1,4 @@
 Change upload_max_filesize and php_value post_max_size in webroot/.htaccess
 Change ENDPOINT variable in selfpaste.sh client file.
+Change the SELFPASTE_UPLOAD_SECRET in config.php and client file.
+Change SELFPASTE_ALLOWED_FILETYPES to your needs.

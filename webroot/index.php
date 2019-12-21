@@ -29,6 +29,7 @@ if(!empty($_urlToParse)) {
     }
 }
 
+# error reporting
 ini_set('log_errors',true);
 ini_set('error_log','./logs/error.log');
 if(DEBUG === true) {
@@ -40,6 +41,8 @@ else {
 
 # static helper class
 require 'lib/summoner.class.php';
+# config file
+require 'config.php';
 
 $_short = false;
 if(isset($_GET['s']) && !empty($_GET['s'])) {
@@ -48,26 +51,53 @@ if(isset($_GET['s']) && !empty($_GET['s'])) {
 }
 
 $_create = false;
-if(isset($_POST['c']) && !empty($_GET['s'])) {
-    $_create = trim($_GET['s']);
-    $_create = Summoner::validate($_short,'nospace') ? $_short : false;
+if(isset($_POST['dl']) && !empty($_POST['dl'])
+    && isset($_FILES['pasty']) && !empty($_FILES['pasty'])
+    && $_POST['dl'] === SELFPASTE_UPLOAD_SECRET) {
+    $_create = true;
 }
 
 $contentType = 'Content-type: text/html; charset=UTF-8';
-$contentBody = 'welcome';
+$contentView = 'welcome';
+$httpResponseCode = 200;
 
 if(!empty($_short)) {
+    $contentView = 'view';
+}
+elseif ($_create === true) {
+    $contentView = 'created';
+    $contentBody = array(
+        'message' => 'Something went wrong.',
+        'status' => '400'
+    );
+    $contentType = 'Content-type:application/json;charset=utf-8';
+    $httpResponseCode = 400;
 
+    $_file = $_FILES['pasty'];
+
+    $_checks = array('fileupload','filetype','store');
+    $_do['status'] = false;
+    foreach($_checks as $_check) {
+        if(method_exists('Summoner',$_check)) {
+            $_do = Summoner::$_check($_file);
+            if($_do['status'] !== true) {
+                break;
+            }
+        }
+    }
+
+    if($_do['status'] === true) {
+        $contentBody = array(
+            'message' => $_do['message'],
+            'status' => '200'
+        );
+    }
 }
 
-var_dump($_POST);
-var_dump($_FILES);
-var_dump($_SERVER);
-
-# header information
 header($contentType);
-if(file_exists('view/'.$contentBody.'.inc.php')) {
-    require_once 'view/'.$contentBody.'.inc.php';
+http_response_code($httpResponseCode);
+if(file_exists('view/'.$contentView.'.inc.php')) {
+    require_once 'view/'.$contentView.'.inc.php';
 }
 else {
     error_log('Content body file missing. '.var_export($_SERVER,true),3,'./logs/error.log');

@@ -14,5 +14,9 @@ AddDefaultCharset utf-8
     RewriteRule ^(.*)$ index.php?s=$1 [QSA,L]
 </IfModule>
 
+# post_max_size should be greater then upload_max_filesize
+# otherwise there will be no feedback and it looks like
+# nothing has happened
+# if post is greater than post_max_size set in php.ini, no feedback is given...
+php_value post_max_size 2M
 php_value upload_max_filesize 1M
-php_value post_max_size 1M
