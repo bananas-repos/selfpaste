@@ -64,11 +64,14 @@ $httpResponseCode = 200;
 if(!empty($_short)) {
     $contentType = 'Content-type: text/plain; charset=UTF-8';
     $contentView = 'view';
+    $httpResponseCode = 404;
+    $contentBody = 'File not found.';
 
     $_requestFile = Summoner::createStoragePath($_short);
     $_requestFile .= $_short;
     if(is_readable($_requestFile)) {
         $contentBody = $_requestFile;
+        $httpResponseCode = 200;
     }
 }
 elseif ($_create === true) {

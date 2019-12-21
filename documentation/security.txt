@@ -24,3 +24,5 @@ So, here is a friendly REMINDER:
     - Clean everything what you do not know
     - You provide the service by hosting it. Your are responsible for it!
     - Change your secret often
+
+Make sure DEBUG is false for production.

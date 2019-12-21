@@ -16,3 +16,6 @@ if (file_exists($contentBody)) {
     readfile($contentBody);
     exit;
 }
+else {
+    echo $contentBody;
+}
