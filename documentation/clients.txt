@@ -1,0 +1,15 @@
+A bash client 'selfpaste.sh' is available for use in the client folder.
+To create this file just copy selfpaste.default.sh to selfpaste.sh and
+make sure you change ENDPOINT and SELFPASTE_UPLOAD_SECRET.
+
+Requirements to create a new client are:
+
+    - Talk to the selfpaste endpoint over HTTP(S)
+    - Make a POST with multipart/form-data
+    - The post must have field pasty and field dl
+    -- pasty=File to upload
+    -- dl=YOUR SECRET
+    - Can parse json at success
+    -- message: Contains the URL or detailed information
+    -- status: integer based in HTML status code.
+    - A normal HTTP 200 without json is not a success

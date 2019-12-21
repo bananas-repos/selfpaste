@@ -144,7 +144,7 @@ class Summoner {
      * @param $file
      * @return array
      */
-    static function fileupload($file) {
+    static function checkFileUploadStatus($file) {
         $message = "Unknown upload error";
         $status = false;
 
@@ -193,20 +193,135 @@ class Summoner {
      * @param $file
      * @return array
      */
-    static function filetype($file) {
-        $message = "Filetype not suported";
+    static function checkAllowedFiletype($file) {
+        $message = "Filetype not supported";
         $status = false;
 
         if(isset($file['tmp_name'])) {
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
             $mime = finfo_file($finfo, $file['tmp_name']);
             finfo_close($finfo);
-            var_dump($mime);
+            if(strpos(SELFPASTE_ALLOWED_FILETYPES,$mime) !== false) {
+                $status = true;
+                $message = "Filetype allowed";
+            }
+            if(DEBUG) $message .= " $mime";
         }
 
         return array(
             'message' => $message,
             'status' => $status
         );
+    }
+
+    /**
+     * Simple helper to create and make sure the storage
+     * location is available
+     * Expects an array from $_FILE
+     * with an extra key = storagepath
+     *
+     * @param $file
+     * @return array
+     */
+    static function checkStorage($file) {
+        $message = "File storage failure";
+        $status = false;
+
+        if(isset($file['storagepath']) && !empty($file['storagepath'])
+            && is_writable(SELFPASTE_UPLOAD_DIR)) {
+            if (mkdir($file['storagepath'],0777,true)) {
+                $message = "File storage creation success";
+                $status = true;
+            }
+        }
+
+        if(DEBUG) $message .= " ".$file['storagepath'];
+
+        return array(
+            'message' => $message,
+            'status' => $status
+        );
+    }
+
+    /**
+     * move the uploaded file.
+     * Depends on the _FILES info and the keys
+     * storagepath, short, shortUrl
+     * @param $file
+     * @return array
+     */
+    static function moveUploadedPasteFile($file) {
+        $message = "File storage failure";
+        $status = false;
+        //shortUrl
+
+        if(isset($file['storagepath']) && !empty($file['storagepath'])
+            && isset($file['short']) && !empty($file['short'])) {
+            $_newFilename = self::endsWith($file['storagepath'],'/') ? $file['storagepath'] : $file['storagepath'].'/';
+            $_newFilename .= $file['short'];
+            if(move_uploaded_file($file['tmp_name'], $_newFilename)) {
+                $status = true;
+                $message = $file['shortUrl'];
+            }
+
+            if(DEBUG) $message .= " $_newFilename";
+        }
+
+        return array(
+            'message' => $message,
+            'status' => $status
+        );
+    }
+
+    /**
+     * Simple helper to create a new name
+     *
+     * @return string
+     * @throws Exception
+     */
+    static function createShort() {
+        $idstring = random_int(1000, 9999);
+        return self::b64sl_pack_id($idstring);
+    }
+
+    /**
+     * create a short string based on a integer
+     *
+     * @see https://www.jwz.org/base64-shortlinks/
+     *
+     * @return string
+     */
+    static function b64sl_pack_id($id) {
+        $id = intval($id);
+        $ida = ($id > 0xFFFFFFFF ? $id >> 32 : 0);	// 32 bit big endian, top
+        $idb = ($id & 0xFFFFFFFF);			// 32 bit big endian, bottom
+        $id = pack ('N', $ida) . pack ('N', $idb);
+        $id = preg_replace('/^\000+/', '', "$id");	// omit high-order NUL bytes
+        $id = base64_encode ($id);
+        $id = str_replace ('+', '-', $id);		// encode URL-unsafe "+" "/"
+        $id = str_replace ('/', '_', $id);
+        $id = preg_replace ('/=+$/', '', $id);	// omit trailing padding bytes
+        return $id;
+    }
+
+    /**
+     * create based on the given string a path
+     * each char in string is a dir
+     * and add SELFPASTE_UPLOAD_DIR
+     * asd -> SELFPASTE_UPLOAD_DIR/a/s/d
+     * @param $string
+     * @return bool|string
+     */
+    static function createStoragePath($string) {
+        $p = false;
+
+        if(!empty($string) && is_writable(SELFPASTE_UPLOAD_DIR)) {
+            $p = SELFPASTE_UPLOAD_DIR.'/';
+            for($i=0;$i<strlen($string);$i++) {
+                $p .= $string[$i]."/";
+            }
+        }
+
+        return $p;
     }
 }

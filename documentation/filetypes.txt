@@ -9,3 +9,5 @@ to look alike something it isn't.
 
 To expand or reduce the allowed filetypes, edit the SELFPASTE_ALLOWED_FILETYPES string to your needs.
 Again READ the README and security info!
+
+Read more about filetypes here: https://www.iana.org/assignments/media-types/media-types.xhtml

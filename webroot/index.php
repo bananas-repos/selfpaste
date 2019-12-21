@@ -62,36 +62,47 @@ $contentView = 'welcome';
 $httpResponseCode = 200;
 
 if(!empty($_short)) {
+    $contentType = 'Content-type: text/plain; charset=UTF-8';
     $contentView = 'view';
+
+    $_requestFile = Summoner::createStoragePath($_short);
+    $_requestFile .= $_short;
+    if(is_readable($_requestFile)) {
+        $contentBody = $_requestFile;
+    }
 }
 elseif ($_create === true) {
     $contentView = 'created';
-    $contentBody = array(
-        'message' => 'Something went wrong.',
-        'status' => '400'
-    );
     $contentType = 'Content-type:application/json;charset=utf-8';
     $httpResponseCode = 400;
+    $_message = 'Something went wrong.';
 
     $_file = $_FILES['pasty'];
 
-    $_checks = array('fileupload','filetype','store');
+    $_file['short'] = Summoner::createShort();
+    $_file['shortUrl'] = SELFPASTE_URL.'/'.$_file['short'];
+    $_file['storagepath'] = Summoner::createStoragePath($_file['short']);
+
+    $_checks = array('checkFileUploadStatus','checkAllowedFiletype','checkStorage','moveUploadedPasteFile');
     $_do['status'] = false;
     foreach($_checks as $_check) {
         if(method_exists('Summoner',$_check)) {
             $_do = Summoner::$_check($_file);
-            if($_do['status'] !== true) {
+            $_message = $_do['message'];
+            if($_do['status'] === true) {
+                $httpResponseCode = 200;
+            }
+            else {
+                $httpResponseCode = 400;
                 break;
             }
         }
     }
 
-    if($_do['status'] === true) {
-        $contentBody = array(
-            'message' => $_do['message'],
-            'status' => '200'
-        );
-    }
+    $contentBody = array(
+        'message' => $_message,
+        'status' => $httpResponseCode
+    );
 }
 
 header($contentType);
