@@ -114,6 +114,7 @@ class Mancubus {
         );
 
         try {
+            $ret = $this->_checkFlood();
             $ret = $this->_checkFileUploadStatus();
             $ret = $this->_checkAllowedFiletype();
             $ret = $this->_checkStorage();
@@ -122,7 +123,7 @@ class Mancubus {
         catch (Exception $e) {
             $ret['message'] = $e->getMessage();
         }
-        
+
         return $ret;
     }
 
@@ -175,6 +176,12 @@ class Mancubus {
         );
     }
 
+    /**
+     * check if SELFPASTE_UPLOAD_DIR and _storagePath
+     * is creatable. If so create _storagePath
+     * @return array
+     * @throws Exception
+     */
     private function _checkStorage() {
         $message = "File storage failure";
         $status = false;
@@ -233,5 +240,55 @@ class Mancubus {
             'message' => $message,
             'status' => $status
         );
+    }
+
+    /**
+     * check if the current paste request is within limits
+     * for this check if the file exists. If so just return the shortURL
+     * @return array
+     * @throws Exception
+     */
+    private function _checkFlood() {
+        $message = "Failing flood requirements";
+        $status = false;
+
+        $this->_cleanupFloodFiles();
+
+        if(!empty($this->_uploadedData['name']) && !empty($this->_shortURL)) {
+            $filename = md5($_SERVER['REMOTE_ADDR'].$this->_uploadedData['name']);
+            $filepath = SELFPASTE_UPLOAD_DIR.'/'.$filename;
+            if(!file_exists($filepath)) {
+                if(file_put_contents($filepath,$this->_shortURL)) {
+                    $status = true;
+                    $message = $this->_shortURL;
+                }
+                else {
+                    throw new Exception("Failed flood prevention requirements");
+                }
+            }
+            else {
+                $message = file_get_contents($filepath);
+                throw new Exception($message);
+            }
+        }
+        else {
+            throw new Exception($message);
+        }
+
+        return array(
+            'message' => $message,
+            'status' => $status
+        );
+    }
+
+    private function _cleanupFloodFiles() {
+        $iterator = new DirectoryIterator(SELFPASTE_UPLOAD_DIR);
+        $now = time();
+        foreach ($iterator as $file) {
+            if($file->isDot() || $file->isDir() || Summoner::startsWith($file->getFilename(),'.')) continue;
+            if ($now - $file->getCTime() >= 30) { // 30 sec
+                unlink(SELFPASTE_UPLOAD_DIR.'/'.$file->getFilename());
+            }
+        }
     }
 }

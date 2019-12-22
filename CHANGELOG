@@ -1,4 +1,6 @@
 TBA version 0.2 Helium
+    * Using https://www.jwz.org/base64-shortlinks/ more correctly
+    * Simple flood protection
 
 
 20191221 version 0.1 Hydrogen
