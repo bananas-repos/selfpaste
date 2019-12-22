@@ -107,6 +107,11 @@ class Mancubus {
         }
     }
 
+    /**
+     * After setting importing stuff process the upload
+     * return status and message
+     * @return array
+     */
     public function process() {
         $ret = array(
             'message' => '',
@@ -281,6 +286,9 @@ class Mancubus {
         );
     }
 
+    /**
+     * clean up the flood tmp files. Everything older then 30 sec will be deleted.
+     */
     private function _cleanupFloodFiles() {
         $iterator = new DirectoryIterator(SELFPASTE_UPLOAD_DIR);
         $now = time();
