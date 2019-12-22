@@ -23,3 +23,7 @@ define('SELFPASTE_ALLOWED_FILETYPES','text/plain,text/comma-separated-values,tex
 # needed to respond with the correct link for your paste
 # please NO / at the end
 define('SELFPASTE_URL','http://your.tld/path/selfpaste/webroot');
+# time in seconds how long a paste will be available. Default 7 days = 604800 sec
+define('SELFPASTE_PASTE_LIFETIME',604800);
+# time in seconds how long the flood protection should take action. Default 30sec
+define('SELFPASTE_FLOOD_LIFETIME',30);

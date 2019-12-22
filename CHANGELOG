@@ -1,6 +1,8 @@
 TBA version 0.2 Helium
     * Using https://www.jwz.org/base64-shortlinks/ more correctly
     * Simple flood protection
+    * Lifetime for each paste.
+    * Deletion of paste older than the lifetime
 
 
 20191221 version 0.1 Hydrogen

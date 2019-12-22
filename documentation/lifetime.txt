@@ -1,0 +1,3 @@
+The default lifetime of a paste is 7 days. Anything older will be deleted.
+
+The default flood prevention time maximum is 30 sec.

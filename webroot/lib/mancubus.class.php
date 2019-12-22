@@ -124,6 +124,8 @@ class Mancubus {
             $ret = $this->_checkAllowedFiletype();
             $ret = $this->_checkStorage();
             $ret = $this->_moveUploadedFile();
+
+            $this->_checkLifetime();
         }
         catch (Exception $e) {
             $ret['message'] = $e->getMessage();
@@ -294,8 +296,27 @@ class Mancubus {
         $now = time();
         foreach ($iterator as $file) {
             if($file->isDot() || $file->isDir() || Summoner::startsWith($file->getFilename(),'.')) continue;
-            if ($now - $file->getCTime() >= 30) { // 30 sec
+            if ($now - $file->getCTime() >= SELFPASTE_FLOOD_LIFETIME) {
                 unlink(SELFPASTE_UPLOAD_DIR.'/'.$file->getFilename());
+            }
+        }
+    }
+
+    /**
+     * delete all pastes older than SELFPASTE_PASTE_LIFETIME
+     */
+    private function _checkLifetime() {
+        $iterator = new RecursiveDirectoryIterator(SELFPASTE_UPLOAD_DIR);
+        $now = time();
+
+        foreach (new RecursiveIteratorIterator($iterator) as $file) {
+            $fname = $file->getFilename();
+            if($file->isDir()
+                || Summoner::startsWith($file->getFilename(),'.')
+                || isset($fname[4])
+            ) continue;
+            if ($now - $file->getCTime() >= SELFPASTE_PASTE_LIFETIME) {
+                unlink(SELFPASTE_UPLOAD_DIR.'/'.$fname);
             }
         }
     }
