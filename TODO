@@ -5,3 +5,5 @@
 * HTTPS for selfpaste bash client
 * multiple secrets
 * extending allowed filetypes
+* creation or even access with basic auth
+* flood protection

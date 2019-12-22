@@ -139,156 +139,53 @@ class Summoner {
 
 
     /**
-     * Simple helper to detect the $_FILE upload status
-     * Expects an array from $_FILE
-     * @param $file
+     * Simple helper to detect the $_FILES upload status
+     * Expects the error value from $_FILES['error']
+     * @param $error
      * @return array
      */
-    static function checkFileUploadStatus($file) {
+    static function checkFileUploadStatus($error) {
         $message = "Unknown upload error";
         $status = false;
 
-        if(isset($file['error'])) {
-            switch ($file['error']) {
-                case UPLOAD_ERR_OK:
-                    $message = "There is no error, the file uploaded with success.";
-                    $status = true;
-                break;
-                case UPLOAD_ERR_INI_SIZE:
-                    $message = "The uploaded file exceeds the upload_max_filesize directive in php.ini";
-                break;
-                case UPLOAD_ERR_FORM_SIZE:
-                    $message = "The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form";
-                break;
-                case UPLOAD_ERR_PARTIAL:
-                    $message = "The uploaded file was only partially uploaded";
-                break;
-                case UPLOAD_ERR_NO_FILE:
-                    $message = "No file was uploaded";
-                break;
-                case UPLOAD_ERR_NO_TMP_DIR:
-                    $message = "Missing a temporary folder";
-                break;
-                case UPLOAD_ERR_CANT_WRITE:
-                    $message = "Failed to write file to disk";
-                break;
-                case UPLOAD_ERR_EXTENSION:
-                    $message = "File upload stopped by extension";
-                break;
-            }
-        }
-
-        return array(
-            'message' => $message,
-            'status' => $status
-        );
-    }
-
-    /**
-     * Simple helper to detect the $_FILE type
-     * Expects an array from $_FILE
-     *
-     * @see https://www.php.net/manual/en/intro.fileinfo.php
-     *
-     * @param $file
-     * @return array
-     */
-    static function checkAllowedFiletype($file) {
-        $message = "Filetype not supported";
-        $status = false;
-
-        if(isset($file['tmp_name'])) {
-            $finfo = finfo_open(FILEINFO_MIME_TYPE);
-            $mime = finfo_file($finfo, $file['tmp_name']);
-            finfo_close($finfo);
-            if(strpos(SELFPASTE_ALLOWED_FILETYPES,$mime) !== false) {
+        switch ($error) {
+            case UPLOAD_ERR_OK:
+                $message = "There is no error, the file uploaded with success.";
                 $status = true;
-                $message = "Filetype allowed";
-            }
-            if(DEBUG) $message .= " $mime";
+            break;
+            case UPLOAD_ERR_INI_SIZE:
+                $message = "The uploaded file exceeds the upload_max_filesize directive in php.ini";
+            break;
+            case UPLOAD_ERR_FORM_SIZE:
+                $message = "The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form";
+            break;
+            case UPLOAD_ERR_PARTIAL:
+                $message = "The uploaded file was only partially uploaded";
+            break;
+            case UPLOAD_ERR_NO_FILE:
+                $message = "No file was uploaded";
+            break;
+            case UPLOAD_ERR_NO_TMP_DIR:
+                $message = "Missing a temporary folder";
+            break;
+            case UPLOAD_ERR_CANT_WRITE:
+                $message = "Failed to write file to disk";
+            break;
+            case UPLOAD_ERR_EXTENSION:
+                $message = "File upload stopped by extension";
+            break;
         }
 
         return array(
             'message' => $message,
             'status' => $status
         );
-    }
-
-    /**
-     * Simple helper to create and make sure the storage
-     * location is available
-     * Expects an array from $_FILE
-     * with an extra key = storagepath
-     *
-     * @param $file
-     * @return array
-     */
-    static function checkStorage($file) {
-        $message = "File storage failure";
-        $status = false;
-
-        if(isset($file['storagepath']) && !empty($file['storagepath'])
-            && is_writable(SELFPASTE_UPLOAD_DIR)) {
-            if (mkdir($file['storagepath'],0777,true)) {
-                $message = "File storage creation success";
-                $status = true;
-            }
-        }
-
-        if(DEBUG) $message .= " ".$file['storagepath'];
-
-        return array(
-            'message' => $message,
-            'status' => $status
-        );
-    }
-
-    /**
-     * move the uploaded file.
-     * Depends on the _FILES info and the keys
-     * storagepath, short, shortUrl
-     * @param $file
-     * @return array
-     */
-    static function moveUploadedPasteFile($file) {
-        $message = "File storage failure";
-        $status = false;
-        //shortUrl
-
-        if(isset($file['storagepath']) && !empty($file['storagepath'])
-            && isset($file['short']) && !empty($file['short'])) {
-            $_newFilename = self::endsWith($file['storagepath'],'/') ? $file['storagepath'] : $file['storagepath'].'/';
-            $_newFilename .= $file['short'];
-            if(move_uploaded_file($file['tmp_name'], $_newFilename)) {
-                $status = true;
-                $message = $file['shortUrl'];
-            }
-
-            if(DEBUG) $message .= " $_newFilename";
-        }
-
-        return array(
-            'message' => $message,
-            'status' => $status
-        );
-    }
-
-    /**
-     * Simple helper to create a new name
-     *
-     * @return string
-     * @throws Exception
-     */
-    static function createShort() {
-        $idstring = random_int(1000, 9999);
-        return self::b64sl_pack_id($idstring);
     }
 
     /**
      * create a short string based on a integer
      *
      * @see https://www.jwz.org/base64-shortlinks/
-     *
      * @return string
      */
     static function b64sl_pack_id($id) {
@@ -305,23 +202,36 @@ class Summoner {
     }
 
     /**
+     * Decode a base64-encoded big-endian integer of up to 64 bits.
+     *
+     * @see https://www.jwz.org/base64-shortlinks/
+     * @param $id
+     * @return false|int|string|string[]
+     */
+    static function b64sl_unpack_id($id) {
+        $id = str_replace ('-', '+', $id);		// decode URL-unsafe "+" "/"
+        $id = str_replace ('_', '/', $id);
+        $id = base64_decode ($id);
+        while (strlen($id) < 8) { $id = "\000$id"; }	// pad with leading NULs
+        $a = unpack ('N*', $id);			// 32 bit big endian
+        $id = ($a[1] << 32) | $a[2];			// pack top and bottom word
+        return $id;
+    }
+
+    /**
      * create based on the given string a path
      * each char in string is a dir
-     * and add SELFPASTE_UPLOAD_DIR
-     * asd -> SELFPASTE_UPLOAD_DIR/a/s/d
+     * asdef -> a/s/d/e/f/
      * @param $string
-     * @return bool|string
+     * @return string
      */
-    static function createStoragePath($string) {
-        $p = false;
-
-        if(!empty($string) && is_writable(SELFPASTE_UPLOAD_DIR)) {
-            $p = SELFPASTE_UPLOAD_DIR.'/';
-            for($i=0;$i<strlen($string);$i++) {
-                $p .= $string[$i]."/";
+    static function forwardslashStringToPath($string) {
+        $ret = '';
+        if(!empty($string)) {
+            for ($i = 0; $i < strlen($string); $i++) {
+                $ret .= $string[$i] . "/";
             }
         }
-
-        return $p;
+        return $ret;
     }
 }

@@ -26,3 +26,6 @@ So, here is a friendly REMINDER:
     - Change your secret often
 
 Make sure DEBUG is false for production.
+
+Protect the storage location from direct access. Default solved with a .htaccess
+file. Better solution is to move the location outside the webroot.

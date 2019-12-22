@@ -40,9 +40,11 @@ else {
 }
 
 # static helper class
-require 'lib/summoner.class.php';
+require_once 'lib/summoner.class.php';
 # config file
-require 'config.php';
+require_once 'config.php';
+# upload / file handling
+require_once 'lib/mancubus.class.php';
 
 $_short = false;
 if(isset($_GET['s']) && !empty($_GET['s'])) {
@@ -67,8 +69,12 @@ if(!empty($_short)) {
     $httpResponseCode = 404;
     $contentBody = 'File not found.';
 
-    $_requestFile = Summoner::createStoragePath($_short);
-    $_requestFile .= $_short;
+    $_t = Summoner::b64sl_unpack_id($_short);
+    $_t = (string)$_t;
+    $_p = Summoner::forwardslashStringToPath($_t);
+    $_requestFile = Summoner::endsWith(SELFPASTE_UPLOAD_DIR,'/') ? SELFPASTE_UPLOAD_DIR : SELFPASTE_UPLOAD_DIR.'/';
+    $_requestFile .= $_p;
+    $_requestFile .= $_t;
     if(is_readable($_requestFile)) {
         $contentBody = $_requestFile;
         $httpResponseCode = 200;
@@ -82,23 +88,17 @@ elseif ($_create === true) {
 
     $_file = $_FILES['pasty'];
 
-    $_file['short'] = Summoner::createShort();
-    $_file['shortUrl'] = SELFPASTE_URL.'/'.$_file['short'];
-    $_file['storagepath'] = Summoner::createStoragePath($_file['short']);
+    $_fileObj = new Mancubus();
+    if($_fileObj->load($_FILES['pasty']) === true) {
+        $_fileObj->setSaveFilename();
+        $_fileObj->setShort();
+        $_fileObj->setStoragePath();
+        $_fileObj->setShortURL();
 
-    $_checks = array('checkFileUploadStatus','checkAllowedFiletype','checkStorage','moveUploadedPasteFile');
-    $_do['status'] = false;
-    foreach($_checks as $_check) {
-        if(method_exists('Summoner',$_check)) {
-            $_do = Summoner::$_check($_file);
-            $_message = $_do['message'];
-            if($_do['status'] === true) {
-                $httpResponseCode = 200;
-            }
-            else {
-                $httpResponseCode = 400;
-                break;
-            }
+        $_do = $_fileObj->process();
+        $_message = $_do['message'];
+        if($_do['status'] === true) {
+            $httpResponseCode = 200;
         }
     }
 
