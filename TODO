@@ -1,4 +1,5 @@
 * Documentation
+* code cleanup and small footprint
 * add force download parameter
 * HTTPS for selfpaste bash client
 * multiple secrets
