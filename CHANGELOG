@@ -1,11 +1,12 @@
-TBA version 0.2 Helium
-    * Using https://www.jwz.org/base64-shortlinks/ more correctly
-    * Simple flood protection
-    * Lifetime for each paste.
-    * Deletion of paste older than the lifetime
+20191223 version 0.2-beta Helium
+* First public beta release
+* Using https://www.jwz.org/base64-shortlinks/ more correctly
+* Simple flood protection
+* Lifetime for each paste.
+* Deletion of paste older than lifetime
 
 
 20191221 version 0.1 Hydrogen
-    Initial creation. Not polished yet.
-    Basic functions working.
-    No release yet
+* Initial creation. Not polished yet.
+* Basic functions working.
+* No release yet
