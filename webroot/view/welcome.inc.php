@@ -17,6 +17,6 @@
         <meta name="author" content="selfpaste">
     </head>
     <body>
-        <p>Well, hello there sweetie!<br />Thank you for using selfpaste.</p>
+        <p>Thank you for using selfpaste.</p>
     </body>
 </html>
