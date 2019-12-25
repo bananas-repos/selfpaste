@@ -5,3 +5,4 @@
 * multiple secrets
 * extending allowed filetypes
 * creation or even access with basic auth
+* abstract storage to support different storage solutions
