@@ -1,6 +1,7 @@
 TBA version x.x Lithium
 * Update information now included
 * Rewritten lifetime calculation
+* Ready for 2020
 
 20191223 version 0.2-beta Helium
 * First public beta release
@@ -8,7 +9,6 @@ TBA version x.x Lithium
 * Simple flood protection
 * Lifetime for each paste.
 * Deletion of paste older than lifetime
-
 
 20191221 version 0.1 Hydrogen
 * Initial creation. Not polished yet.
