@@ -108,6 +108,7 @@ elseif ($_create === true) {
     );
 }
 
+header('X-PROVIDED-BY: selfpaste');
 header($contentType);
 http_response_code($httpResponseCode);
 if(file_exists('view/'.$contentView.'.inc.php')) {
