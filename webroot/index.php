@@ -11,7 +11,7 @@
  */
 
 # global debug setting
-define('DEBUG',true);
+define('DEBUG',false);
 
 # Encoding and error reporting setting
 mb_http_output('UTF-8');

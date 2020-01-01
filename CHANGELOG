@@ -1,7 +1,8 @@
-TBA version x.x Lithium
+2020101 version 0.3-beta Lithium
 * Update information now included
 * Rewritten lifetime calculation
 * Ready for 2020
+* Lifetime in days now and not in seconds
 
 20191223 version 0.2-beta Helium
 * First public beta release
