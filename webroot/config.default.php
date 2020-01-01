@@ -7,7 +7,7 @@
  * COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0
  * along with this program.  If not, see http://www.sun.com/cddl/cddl.html
  *
- * 2019 https://www.bananas-playground.net/projekt/selfpaste
+ * 2019 - 2020 https://://www.bananas-playground.net/projekt/selfpaste
  */
 
 # this is your installation secret. Could be anything.
@@ -23,7 +23,7 @@ define('SELFPASTE_ALLOWED_FILETYPES','text/plain,text/comma-separated-values,tex
 # needed to respond with the correct link for your paste
 # please NO / at the end
 define('SELFPASTE_URL','http://your.tld/path/selfpaste/webroot');
-# time in seconds how long a paste will be available. Default 7 days = 604800 sec
-define('SELFPASTE_PASTE_LIFETIME',604800);
+# time in days how long a paste will be available. Default 30 days
+define('SELFPASTE_PASTE_LIFETIME',30);
 # time in seconds how long the flood protection should take action. Default 30sec
 define('SELFPASTE_FLOOD_LIFETIME',30);

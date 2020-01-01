@@ -7,11 +7,11 @@
  * COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0
  * along with this program.  If not, see http://www.sun.com/cddl/cddl.html
  *
- * 2019 https://www.bananas-playground.net/projekt/selfpaste
+ * 2019 - 2020 https://://www.bananas-playground.net/projekt/selfpaste
  */
 
 # global debug setting
-define('DEBUG',true);
+define('DEBUG',false);
 
 # Encoding and error reporting setting
 mb_http_output('UTF-8');
@@ -108,6 +108,7 @@ elseif ($_create === true) {
     );
 }
 
+header('X-PROVIDED-BY: selfpaste');
 header($contentType);
 http_response_code($httpResponseCode);
 if(file_exists('view/'.$contentView.'.inc.php')) {

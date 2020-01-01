@@ -6,7 +6,7 @@
 # COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0
 # along with this program.  If not, see http://www.sun.com/cddl/cddl.html
 #
-# 2019 https://www.bananas-playground.net/projekt/selfpaste
+# 2019 - 2020 https://://www.bananas-playground.net/projekt/selfpaste
 
 command -v curl >/dev/null 2>&1 || { echo >&2 "I require curl (https://curl.haxx.se/) but it's not installed.  Aborting."; exit 1; }
 command -v jq >/dev/null 2>&1 || { echo >&2 "I require jq (https://stedolan.github.io/jq/) but it's not installed.  Aborting."; exit 1; }

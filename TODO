@@ -1,6 +1,11 @@
 * Documentation
+* code cleanup and small footprint
 * add force download parameter
 * HTTPS for selfpaste bash client
 * multiple secrets
 * extending allowed filetypes
 * creation or even access with basic auth
+* abstract storage to support different storage solutions
+* config file for client script
+* proxy setting for client script
+* Lifetimecheck as cronjob

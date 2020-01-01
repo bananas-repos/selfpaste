@@ -1,0 +1,2 @@
+If you update from a previous version make sure every update step is done
+since your current used version.
