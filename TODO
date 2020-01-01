@@ -6,3 +6,5 @@
 * extending allowed filetypes
 * creation or even access with basic auth
 * abstract storage to support different storage solutions
+* config file for client script
+* proxy setting for client script
