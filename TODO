@@ -8,3 +8,4 @@
 * abstract storage to support different storage solutions
 * config file for client script
 * proxy setting for client script
+* Lifetimecheck as cronjob

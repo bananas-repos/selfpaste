@@ -7,7 +7,7 @@
  * COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0
  * along with this program.  If not, see http://www.sun.com/cddl/cddl.html
  *
- * 2020 https://www.bananas-playground.net/projekt/selfpaste
+ * 2019 - 2020 https://://www.bananas-playground.net/projekt/selfpaste
  */
 
 /**
@@ -307,7 +307,7 @@ class Mancubus {
      */
     private function _checkLifetime() {
         $iterator = new RecursiveDirectoryIterator(SELFPASTE_UPLOAD_DIR);
-        $now = time();
+        $datepointInThePastInSec = strtotime('-'.SELFPASTE_PASTE_LIFETIME.' days');
 
         foreach (new RecursiveIteratorIterator($iterator) as $file) {
             $fname = $file->getFilename();
@@ -315,8 +315,10 @@ class Mancubus {
                 || Summoner::startsWith($file->getFilename(),'.')
                 || isset($fname[4])
             ) continue;
-            if ($now - $file->getCTime() >= SELFPASTE_PASTE_LIFETIME) {
-                unlink(SELFPASTE_UPLOAD_DIR.'/'.$fname);
+            if ($file->getMTime() <= $datepointInThePastInSec) {
+                if(is_writable($file->getPathname())) {
+                    unlink($file->getPathname());
+                }
             }
         }
     }

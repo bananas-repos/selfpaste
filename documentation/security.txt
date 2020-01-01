@@ -3,7 +3,7 @@ Unless you:
 
     - Keep your secret a secret
     - Do not use it publicly
-    - Do not promote it as a new paste plattform
+    - Do not promote it as a new paste platform
     - Change your secret often
 
 
