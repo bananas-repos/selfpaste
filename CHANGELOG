@@ -1,5 +1,6 @@
 tbd version 0.4-beta Beryllium
-* added perl as allowed file
+* added perl as default allowed file
+* added shellscript to the default allowd files
 
 2020101 version 0.3-beta Lithium
 * Update information now included
