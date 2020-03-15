@@ -18,7 +18,7 @@ define('SELFPASTE_UPLOAD_SECRET','PLEASE CHANGE YOUR SECRET');
 define('SELFPASTE_UPLOAD_DIR','pasties');
 # those are the allowed file types.
 # Make sure you read the README and documentation!
-define('SELFPASTE_ALLOWED_FILETYPES','text/plain,text/comma-separated-values,text/css,text/xml,text/x-php,text/x-perl,text/x-shellscript');
+define('SELFPASTE_ALLOWED_FILETYPES','text/plain,text/comma-separated-values,text/css,text/xml,text/x-php,text/x-perl,text/x-shellscript,text/html,text/javascript');
 # this is your domain and path on which selfpaste is accessible
 # needed to respond with the correct link for your paste
 # please NO / at the end
