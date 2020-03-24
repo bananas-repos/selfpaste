@@ -1,6 +1,2 @@
 * small footprint
-* add force download parameter
 * multiple secrets
-* creation or even access with basic auth
-* abstract storage to support different storage solutions
-* config file for client script
