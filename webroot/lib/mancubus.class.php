@@ -135,6 +135,15 @@ class Mancubus {
     }
 
     /**
+     * Cleans lifetime and floodfiles.
+     * @param boolean
+     */
+    public function cleanupCronjob($verbose=false) {
+        $this->_cleanupFloodFiles($verbose);
+        $this->_checkLifetime($verbose);
+    }
+
+    /**
      * Check if the POST upload worked
      * @return array message,status
      * @throws Exception
@@ -291,12 +300,13 @@ class Mancubus {
     /**
      * clean up the flood tmp files. Everything older then 30 sec will be deleted.
      */
-    private function _cleanupFloodFiles() {
+    private function _cleanupFloodFiles($verbose=false) {
         $iterator = new DirectoryIterator(SELFPASTE_UPLOAD_DIR);
         $now = time();
         foreach ($iterator as $file) {
             if($file->isDot() || $file->isDir() || Summoner::startsWith($file->getFilename(),'.')) continue;
             if ($now - $file->getCTime() >= SELFPASTE_FLOOD_LIFETIME) {
+                if($verbose === true) echo "Delete ".$file->getFilename()."\n";
                 unlink(SELFPASTE_UPLOAD_DIR.'/'.$file->getFilename());
             }
         }
@@ -305,7 +315,7 @@ class Mancubus {
     /**
      * delete all pastes older than SELFPASTE_PASTE_LIFETIME
      */
-    private function _checkLifetime() {
+    private function _checkLifetime($verbose=false) {
         $iterator = new RecursiveDirectoryIterator(SELFPASTE_UPLOAD_DIR);
         $datepointInThePastInSec = strtotime('-'.SELFPASTE_PASTE_LIFETIME.' days');
 
@@ -317,6 +327,7 @@ class Mancubus {
             ) continue;
             if ($file->getMTime() <= $datepointInThePastInSec) {
                 if(is_writable($file->getPathname())) {
+                    if($verbose === true) echo "Delete ".$file->getPathname()."\n";
                     unlink($file->getPathname());
                 }
             }

@@ -2,6 +2,9 @@ tbd version 0.4-beta Beryllium
 * added perl as default allowed file
 * added shellscript to the default allowed files
 * added html and js to the default allowed files
+* added an example cronjob file which can be used
+  to clean old pastes. See clean-cronjob.txt for more
+  detals
 
 2020101 version 0.3-beta Lithium
 * Update information now included
