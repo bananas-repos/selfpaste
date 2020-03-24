@@ -1,5 +1,4 @@
-* Documentation
-* code cleanup and small footprint
+* small footprint
 * add force download parameter
 * multiple secrets
 * creation or even access with basic auth

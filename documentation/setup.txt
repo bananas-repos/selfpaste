@@ -1,4 +1,9 @@
-Change upload_max_filesize and php_value post_max_size in webroot/.htaccess
-Change ENDPOINT variable in selfpaste.sh client file.
-Change the SELFPASTE_UPLOAD_SECRET in config.php and client file.
-Change SELFPASTE_ALLOWED_FILETYPES to your needs.
+Unpack and move everything in the webroot folder to a webaccessable folder
+into your webserver.
+
+Rename config.default.php t config.php.
+
+Open config.php, read the comments and make your changes.
+
+For more information about some config settings read the seperate documentation
+file for this setting.
