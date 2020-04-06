@@ -29,9 +29,12 @@ if(!empty($_urlToParse)) {
     }
 }
 
+define('ERROR_LOG_FILE','./logs/error.log');
+define('CREATE_LOG','./logs/create.log');
+
 # error reporting
 ini_set('log_errors',true);
-ini_set('error_log','./logs/error.log');
+ini_set('error_log',ERROR_LOG_FILE);
 if(DEBUG === true) {
     ini_set('display_errors',true);
 }
@@ -55,7 +58,7 @@ if(isset($_GET['s']) && !empty($_GET['s'])) {
 $_create = false;
 if(isset($_POST['dl']) && !empty($_POST['dl'])
     && isset($_FILES['pasty']) && !empty($_FILES['pasty'])
-    && $_POST['dl'] === SELFPASTE_UPLOAD_SECRET) {
+    && isset(SELFPASTE_UPLOAD_SECRET[$_POST['dl']])) {
     $_create = true;
 }
 
@@ -99,6 +102,9 @@ elseif ($_create === true) {
         $_message = $_do['message'];
         if($_do['status'] === true) {
             $httpResponseCode = 200;
+            if(defined('LOG_CREATION') && LOG_CREATION === true) {
+                error_log(date("c")." ".$_message." ".SELFPASTE_UPLOAD_SECRET[$_POST['dl']]."\n",3,CREATE_LOG);
+            }
         }
     }
 
@@ -115,7 +121,7 @@ if(file_exists('view/'.$contentView.'.inc.php')) {
     require_once 'view/'.$contentView.'.inc.php';
 }
 else {
-    error_log('Content body file missing. '.var_export($_SERVER,true),3,'./logs/error.log');
+    error_log('Content body file missing. '.var_export($_SERVER,true),3,ERROR_LOG_FILE);
     http_response_code(400);
     die('Well, something went wrong...');
 }

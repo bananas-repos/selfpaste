@@ -1,2 +1,15 @@
 If you update from a previous version make sure every update step is done
 since your current used version.
+
+## 0.4-beta Beryllium
+Update your config.php to reflect the following updates.
+selfpaste does now support the usage of multiple secrets.
+The usage is written into create.log
+define('SELFPASTE_UPLOAD_SECRET',
+	array(
+		'PLEASE CHANGE YOUR SECRET' => 'Your description for this secret 1',
+		'PLEASE_2' => 'Your description for this secret'
+	)
+);
+# creation of a paste and which secret was used into logs/create.log file
+define('LOG_CREATION',true);

@@ -12,7 +12,15 @@
 
 # this is your installation secret. Could be anything.
 # Think of it as a key. Change it often to avoid any abuse.
-define('SELFPASTE_UPLOAD_SECRET','PLEASE CHANGE YOUR SECRET');
+# The description will be used in the log files
+define('SELFPASTE_UPLOAD_SECRET',
+	array(
+		'PLEASE CHANGE YOUR SECRET' => 'Your description for this secret 1',
+		'PLEASE CHANGE YOUR SECRET' => 'Your description for this secret'
+	)
+);
+# creation of a paste and which secret was used into logs/create.log file
+define('LOG_CREATION',true);
 # this is the default storage location. If you decide to move, then make sure
 # to move the included .htaccess with it to protect the direct access
 define('SELFPASTE_UPLOAD_DIR','pasties');
