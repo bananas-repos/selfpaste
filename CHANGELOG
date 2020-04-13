@@ -1,4 +1,5 @@
-tbd version 0.4-beta Beryllium
+tbd version 1.0 Beryllium
+* final 1.0 working version
 * added perl as default allowed file
 * added shellscript to the default allowed files
 * added html and js to the default allowed files
@@ -6,6 +7,7 @@ tbd version 0.4-beta Beryllium
   to clean old pastes. See clean-cronjob.txt for more
   details
 * Multiple secrets are now supported
+* added a c client which can be build with the makefile
 
 2020101 version 0.3-beta Lithium
 * Update information now included

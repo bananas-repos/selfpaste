@@ -153,22 +153,25 @@ int main(int argc, char *argv[]) {
     } else {
         printf("ERROR: Configfile '%s' not found.\n",configFilePath);
         if(arguments.create_config_file == 1) {
-            if(arguments.verbose) printf("Creating configfile: '%s'\n", configFilePath);
+            printf("Creating configfile: '%s'\n", configFilePath);
 
             FILE *fp = fopen(configFilePath, "w");
             if (fp) {
                 fputs("# selfpaste config file.\n", fp);
                 fprintf(fp, "# See %s for more details.\n", argp_program_bug_address);
                 fprintf(fp, "# Version: %s\n", argp_program_version);
-                fprintf(fp, "SELFPASTE_SECRET=%s\n", randomString(50));
+                fprintf(fp, "SELFPASTE_UPLOAD_SECRET=%s\n", randomString(50));
+                fputs("ENDPOINT=http://you-seflpaste-endpoi.nt\n", fp);
                 fclose(fp);
-                if(arguments.verbose) printf("Config file '%s' created.\n", configFilePath);
+
+                printf("Config file '%s' created.\nPlease update your settings!\n", configFilePath);
+                return(0);
             }
             else {
                 printf("ERROR: Configfile '%s' could not be written.\n",configFilePath);
-                return(1);
             }
         }
+        return(1);
     }
 
 	return(0);
