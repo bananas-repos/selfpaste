@@ -38,50 +38,49 @@ static struct argp_option options[] = {
 };
 
 struct arguments {
-  char *args[1];
-  int quiet, verbose, create_config_file;
-  char *output_file;
+    char *args[1];
+    int quiet, verbose, create_config_file;
+    char *output_file;
 };
 
 // Parse a single option.
 static error_t
 parse_opt (int key, char *arg, struct argp_state *state) {
-  //Get the input argument from argp_parse, which we know is a pointer to our arguments structure.
-  struct arguments *arguments = state->input;
+    struct arguments *arguments = state->input;
 
-  switch (key)
-    {
-    case 'q':
-      arguments->quiet = 1;
-    break;
-    case 'v':
-      arguments->verbose = 1;
-    break;
-    case 'o':
-      arguments->output_file = arg;
-    break;
-    case 'c':
-        arguments->create_config_file = 1;
-    break;
+    switch (key) {
+        case 'q':
+            arguments->quiet = 1;
+        break;
+        case 'v':
+            arguments->verbose = 1;
+        break;
+        case 'o':
+            arguments->output_file = arg;
+        break;
+        case 'c':
+            arguments->create_config_file = 1;
+        break;
 
-    case ARGP_KEY_ARG:
-      if (state->arg_num >= 1)
-        // Too many arguments.
-        argp_usage (state);
+        case ARGP_KEY_ARG:
+          if (state->arg_num >= 1)
+            // Too many arguments.
+            argp_usage (state);
 
-      arguments->args[state->arg_num] = arg;
-    break;
+          arguments->args[state->arg_num] = arg;
+        break;
 
-    case ARGP_KEY_END:
-      if (state->arg_num < 1 && arguments->create_config_file == 0)
-        // Not enough arguments.
-        argp_usage (state);
-    break;
+        case ARGP_KEY_END:
+          if (state->arg_num < 1 && arguments->create_config_file == 0)
+            // Not enough arguments.
+            argp_usage (state);
+        break;
 
-    default:
-      return ARGP_ERR_UNKNOWN;
+        default:
+        return ARGP_ERR_UNKNOWN;
     }
-  return 0;
+
+    return 0;
 }
 
 static struct argp argp = { options, parse_opt, args_doc, doc };
@@ -98,6 +97,10 @@ char *randomString(int len) {
     rstr[len] = '\0';
     return rstr;
 }
+
+struct configOptions {
+    char *secret, *endpoint;
+};
 
 
 
@@ -135,7 +138,7 @@ int main(int argc, char *argv[]) {
     }
     if(arguments.verbose) printf("Homedir: %s\n", homedir);
 
-    char configFileName[15] = "/.selfpaste.cfg";
+    char configFileName[16] = "/.selfpaste.cfg";
     if(arguments.verbose) printf("Config file name: '%s'\n", configFileName);
     char configFilePath[strlen(homedir) + strlen(configFileName)];
 
@@ -144,11 +147,11 @@ int main(int argc, char *argv[]) {
 
     if(arguments.verbose) printf("Configfilepath: '%s'\n", configFilePath);
 
-    if( access( configFilePath, F_OK ) != -1 ) {
+    if(access(configFilePath, F_OK) != -1) {
         if(arguments.verbose) printf("Using configfile: '%s'\n", configFilePath);
         if(arguments.create_config_file == 1) {
             printf("INFO: Re creating configfile by manually deleting it.\n");
-            return(1);
+            exit(1);
         }
     } else {
         printf("ERROR: Configfile '%s' not found.\n",configFilePath);
@@ -165,14 +168,50 @@ int main(int argc, char *argv[]) {
                 fclose(fp);
 
                 printf("Config file '%s' created.\nPlease update your settings!\n", configFilePath);
-                return(0);
+                exit(0);
             }
             else {
                 printf("ERROR: Configfile '%s' could not be written.\n",configFilePath);
             }
         }
-        return(1);
+        exit(1);
     }
+
+    // https://rosettacode.org/wiki/Read_a_configuration_file#C
+    // https://github.com/welljsjs/Config-Parser-C
+    // https://hyperrealm.github.io/libconfig/
+    // reading the config
+    struct configOptions configOptions;
+    FILE* fp;
+    if ((fp = fopen(configFilePath, "r")) == NULL) {
+        printf("ERROR: Configfile '%s' could not be opened.\n",configFilePath);
+        exit(1);
+    }
+    if(arguments.verbose) printf("Reading configfile: '%s'\n", configFilePath);
+    char line[128];
+    char *optKey,*optValue;
+    while (fgets(line, sizeof line, fp) != NULL ) {
+        if(arguments.verbose) printf("- Line: %s", line);
+        if (line[0] == '#') continue;
+
+        optKey = strtok(line, "=");
+        if(arguments.verbose) printf("Option: %s\n", optKey);
+        optValue = strtok(NULL, "=\n\r");
+        if(arguments.verbose) printf("Value: %s\n", optValue);
+
+        if(strcmp("SELFPASTE_UPLOAD_SECRET",optKey) == 0) {
+            configOptions.secret = optValue;
+        }
+    }
+    fclose(fp);
+
+    if(arguments.verbose) {
+        printf("Using\n- Secret: %s\n- Endpoint: %s\n",
+            configOptions.secret,configOptions.endpoint);
+    }
+
+
+
 
 	return(0);
 }
