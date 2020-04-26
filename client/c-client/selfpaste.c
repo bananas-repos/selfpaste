@@ -25,6 +25,9 @@
 // https://curl.haxx.se
 #include <curl/curl.h>
 
+// https://github.com/json-c/json-c
+#include <json-c/json.h>
+
 /*
  * Commandline arguments
  * see: https://www.gnu.org/software/libc/manual/html_node/Argp-Example-3.html#Argp-Example-3
@@ -154,7 +157,7 @@ WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void *userp) {
  * and receive the URL as a answer
  * see: https://curl.haxx.se/libcurl/c/getinmemory.html
  */
-int curlCall(struct configOptions cfgo, struct cmdArguments arguments) {
+int uploadCall(struct configOptions cfgo, struct cmdArguments arguments) {
     CURL *curl_handle;
     CURLcode res;
 
@@ -162,10 +165,6 @@ int curlCall(struct configOptions cfgo, struct cmdArguments arguments) {
 
     chunk.memory = malloc(1);  // will be grown as needed by the realloc above
     chunk.size = 0;    // no data at this point
-
-    struct curl_slist *headers = NULL;
-    headers = curl_slist_append(headers, "Content-Type:multipart/form-data");
-    //headers = curl_slist_append(headers, "Accept: application/json");
 
     curl_global_init(CURL_GLOBAL_ALL);
 
@@ -179,33 +178,58 @@ int curlCall(struct configOptions cfgo, struct cmdArguments arguments) {
     curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&chunk);
     // some servers don't like requests that are made without a user-agent
     // field, so we provide one
-    curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, "libcurl-agent/1.0");
-    // add headers
-    curl_easy_setopt(curl_handle, CURLOPT_HTTPHEADER, headers);
+    curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, "selfpaseCurlAgent/1.0");
 
     // add the POST data
-    curl_easy_setopt(curl_handle, CURLOPT_POST, 1);
-    // curl_easy_setopt(curl_handle, CURLOPT_POSTFIELDS, "name=daniel&project=curl");
+    // // https://curl.haxx.se/libcurl/c/postit2.html
+    curl_mime *form = NULL;
+    curl_mimepart *field = NULL;
+
+    form = curl_mime_init(curl_handle);
+    field = curl_mime_addpart(form);
+    curl_mime_name(field, "pasty");
+    curl_mime_filedata(field, arguments.args[0]);
+
+    field = curl_mime_addpart(form);
+    curl_mime_name(field, "dl");
+    curl_mime_data(field, cfgo.secret, CURL_ZERO_TERMINATED);
+
+    curl_easy_setopt(curl_handle, CURLOPT_MIMEPOST, form);
 
 
-    // get it!
+    // execute it!
     res = curl_easy_perform(curl_handle);
 
     // check for errors
     if(res != CURLE_OK || chunk.size < 1) {
-        printf("curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+        printf("ERROR: curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
         exit(1);
     }
 
+    json_object *json, *jsonWork;
+    enum json_tokener_error jerr = json_tokener_success;
+
     if (chunk.memory != NULL) {
         if(arguments.verbose) printf("%lu bytes retrieved\n", (unsigned long)chunk.size);
-        if(arguments.verbose) printf("CURL Returned: \n%s\n", chunk.memory);
+        if(arguments.verbose) printf("CURL returned:\n%s\n", chunk.memory);
 
         // https://gist.github.com/leprechau/e6b8fef41a153218e1f4
+        json = json_tokener_parse_verbose(chunk.memory, &jerr);
+        if (jerr == json_tokener_success) {
+            jsonWork = json_object_object_get(json, "status");
+            printf("Status: %s\n", json_object_get_string(jsonWork));
+
+            jsonWork = json_object_object_get(json, "message");
+            printf("selfpastelink: %s\n", json_object_get_string(jsonWork));
+        }
+        else {
+            printf("ERROR: Invalid payload returned. Check your config:\n%s\n", chunk.memory);
+        }
     }
 
     // cleanup curl stuff
     curl_easy_cleanup(curl_handle);
+    curl_mime_free(form);
     free(chunk.memory);
     curl_global_cleanup();
 
@@ -337,11 +361,13 @@ int main(int argc, char *argv[]) {
     fclose(fp);
 
     if(arguments.verbose) {
-        printf("Using\n- Secret: %s\n- Endpoint: %s\n",
-            configOptions.secret,configOptions.endpoint);
+        printf("Using\n- Secret: %s\n- Endpoint: %s\n- File: %s\n",
+            configOptions.secret,configOptions.endpoint,
+            arguments.args[0]);
     }
 
-    curlCall(configOptions, arguments);
+    // do the upload
+    uploadCall(configOptions, arguments);
 
-	return(0);
+    return(0);
 }
