@@ -22,7 +22,13 @@
 #include <pwd.h>
 #include <time.h>
 
-// https://www.gnu.org/software/libc/manual/html_node/Argp-Example-3.html#Argp-Example-3
+// https://curl.haxx.se
+#include <curl/curl.h>
+
+/*
+ * Commandline arguments
+ * see: https://www.gnu.org/software/libc/manual/html_node/Argp-Example-3.html#Argp-Example-3
+ */
 const char *argp_program_version = "1.0";
 const char *argp_program_bug_address = "https://://www.bananas-playground.net/projekt/selfpaste";
 static char doc[] = "selfpaste. Upload given file to your selfpaste installation.";
@@ -37,7 +43,7 @@ static struct argp_option options[] = {
     { 0 }
 };
 
-struct arguments {
+struct cmdArguments {
     char *args[1];
     int quiet, verbose, create_config_file;
     char *output_file;
@@ -46,7 +52,7 @@ struct arguments {
 // Parse a single option.
 static error_t
 parse_opt (int key, char *arg, struct argp_state *state) {
-    struct arguments *arguments = state->input;
+    struct cmdArguments *arguments = state->input;
 
     switch (key) {
         case 'q':
@@ -85,7 +91,9 @@ parse_opt (int key, char *arg, struct argp_state *state) {
 
 static struct argp argp = { options, parse_opt, args_doc, doc };
 
-// some random string creation stuff
+/*
+ * Simple random string generation
+ */
 const char availableChars[] = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-_";
 int intN(int n) { return rand() % n; }
 char *randomString(int len) {
@@ -98,17 +106,125 @@ char *randomString(int len) {
     return rstr;
 }
 
+/*
+ * struct to hold the config options loaded from config file
+ * Extend if the options file changes.
+ */
 struct configOptions {
-    char *secret, *endpoint;
+    char *secret;
+    char *endpoint;
 };
 
+/*
+ * struct to hold the returned data from the http post call
+ * done with curl
+ * see: https://curl.haxx.se/libcurl/c/getinmemory.html
+ */
+struct MemoryStruct {
+    char *memory;
+    size_t size;
+};
+
+/*
+ * callback function from the curl call
+ * see: https://curl.haxx.se/libcurl/c/getinmemory.html
+ */
+static size_t
+WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void *userp) {
+    struct MemoryStruct *mem = (struct MemoryStruct *)userp;
+    size_t realsize = size * nmemb;
+
+    char *ptr = realloc(mem->memory, mem->size + realsize + 1);
+    if(ptr == NULL) {
+    /* out of memory! */
+    printf("not enough memory (realloc returned NULL)\n");
+        return 0;
+    }
+
+    mem->memory = ptr;
+    memcpy(&(mem->memory[mem->size]), contents, realsize);
+    mem->size += realsize;
+    mem->memory[mem->size] = 0;
+
+    return realsize;
+}
+
+/*
+ * make a post curl call to upload the given file
+ * and receive the URL as a answer
+ * see: https://curl.haxx.se/libcurl/c/getinmemory.html
+ */
+int curlCall(struct configOptions cfgo, struct cmdArguments arguments) {
+    CURL *curl_handle;
+    CURLcode res;
+
+    struct MemoryStruct chunk;
+
+    chunk.memory = malloc(1);  // will be grown as needed by the realloc above
+    chunk.size = 0;    // no data at this point
+
+    struct curl_slist *headers = NULL;
+    headers = curl_slist_append(headers, "Content-Type:multipart/form-data");
+    //headers = curl_slist_append(headers, "Accept: application/json");
+
+    curl_global_init(CURL_GLOBAL_ALL);
+
+    // init the curl session
+    curl_handle = curl_easy_init();
+    // specify URL to get
+    curl_easy_setopt(curl_handle, CURLOPT_URL, cfgo.endpoint);
+    // send all data to this function
+    curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
+    // we pass our 'chunk' struct to the callback function
+    curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&chunk);
+    // some servers don't like requests that are made without a user-agent
+    // field, so we provide one
+    curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, "libcurl-agent/1.0");
+    // add headers
+    curl_easy_setopt(curl_handle, CURLOPT_HTTPHEADER, headers);
+
+    // add the POST data
+    curl_easy_setopt(curl_handle, CURLOPT_POST, 1);
+    // curl_easy_setopt(curl_handle, CURLOPT_POSTFIELDS, "name=daniel&project=curl");
 
 
+    // get it!
+    res = curl_easy_perform(curl_handle);
+
+    // check for errors
+    if(res != CURLE_OK || chunk.size < 1) {
+        printf("curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+        exit(1);
+    }
+
+    if (chunk.memory != NULL) {
+        if(arguments.verbose) printf("%lu bytes retrieved\n", (unsigned long)chunk.size);
+        if(arguments.verbose) printf("CURL Returned: \n%s\n", chunk.memory);
+
+        // https://gist.github.com/leprechau/e6b8fef41a153218e1f4
+    }
+
+    // cleanup curl stuff
+    curl_easy_cleanup(curl_handle);
+    free(chunk.memory);
+    curl_global_cleanup();
+
+    return 0;
+}
+
+
+
+
+/*
+ * main routine
+ */
 int main(int argc, char *argv[]) {
-	struct arguments arguments;
 	srand(time(NULL));
 
-    // argument parsing and default values
+    /*
+     * command line argument parsing and default values
+     */
+    struct cmdArguments arguments;
     arguments.quiet = 0;
     arguments.verbose = 0;
     arguments.output_file = "-";
@@ -127,7 +243,11 @@ int main(int argc, char *argv[]) {
         );
     }
 
-    // checking and finding config file
+    /*
+     * Config file check.
+     * Also create if non is available and command line option
+     * to create it is set.
+     */
     char* homedir = getenv("HOME");
     if ( homedir == NULL ) {
         homedir = getpwuid(getuid())->pw_dir;
@@ -177,10 +297,15 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    // https://rosettacode.org/wiki/Read_a_configuration_file#C
-    // https://github.com/welljsjs/Config-Parser-C
-    // https://hyperrealm.github.io/libconfig/
-    // reading the config
+    /*
+     * Reading and parsing the config file.
+     * populate configOptions struct
+     *
+     * https://rosettacode.org/wiki/Read_a_configuration_file#C
+     * https://github.com/welljsjs/Config-Parser-C
+     * https://hyperrealm.github.io/libconfig/
+     * https://www.gnu.org/software/libc/manual/html_node/Finding-Tokens-in-a-String.html
+     */
     struct configOptions configOptions;
     FILE* fp;
     if ((fp = fopen(configFilePath, "r")) == NULL) {
@@ -189,16 +314,22 @@ int main(int argc, char *argv[]) {
     }
     if(arguments.verbose) printf("Reading configfile: '%s'\n", configFilePath);
     char line[128];
-    char *optKey,*optValue;
+    char *optKey,*optValue, *workwith;
     while (fgets(line, sizeof line, fp) != NULL ) {
         if(arguments.verbose) printf("- Line: %s", line);
         if (line[0] == '#') continue;
 
-        optKey = strtok(line, "=");
+        // important. strok modifies the string it works with
+        workwith = strdup(line);
+
+        optKey = strtok(workwith, "=");
         if(arguments.verbose) printf("Option: %s\n", optKey);
-        optValue = strtok(NULL, "=\n\r");
+        optValue = strtok(NULL, "\n\r");
         if(arguments.verbose) printf("Value: %s\n", optValue);
 
+        if(strcmp("ENDPOINT",optKey) == 0) {
+            configOptions.endpoint = optValue;
+        }
         if(strcmp("SELFPASTE_UPLOAD_SECRET",optKey) == 0) {
             configOptions.secret = optValue;
         }
@@ -210,8 +341,7 @@ int main(int argc, char *argv[]) {
             configOptions.secret,configOptions.endpoint);
     }
 
-
-
+    curlCall(configOptions, arguments);
 
 	return(0);
 }
