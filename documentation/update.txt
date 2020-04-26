@@ -1,5 +1,10 @@
 If you update from a previous version make sure every update step is done
 since your current used version.
+Update process is as follows:
+- copy lib, view and index.php into your webserver installation location
+- update your config.php
+- make sure of any special update steps listed below.
+
 
 ## 0.4-beta Beryllium
 Update your config.php to reflect the following updates.
