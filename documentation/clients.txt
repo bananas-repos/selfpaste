@@ -2,7 +2,7 @@ A bash client 'selfpaste.sh' is available for use in the client folder.
 To create this file just copy selfpaste.default.sh to selfpaste.sh and
 make sure you change ENDPOINT and SELFPASTE_UPLOAD_SECRET.
 
-A c client is available to be build with makefile. Build and see included
+A C client is available to be build with makefile. Build and see included
 help for more information.
 
 Requirements to create a new client are:

@@ -1,8 +1,9 @@
-tbd version 1.0 Beryllium
+20200426 version 1.0 Beryllium
 * final 1.0 working version
 * added perl as default allowed file
 * added shellscript to the default allowed files
 * added html and js to the default allowed files
+* added C source files to the default allowed files
 * added an example cronjob file which can be used
   to clean old pastes. See clean-cronjob.txt for more
   details
