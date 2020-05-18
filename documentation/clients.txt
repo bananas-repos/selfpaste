@@ -7,7 +7,7 @@ help for more information.
 
 Requirements to create a new client are:
 
-    - Talk to the selfpaste endpoint over HTTP(S)
+    - Talk to the selfpaste endpoint over HTTP(S) (your choice)
     - Make a POST with multipart/form-data
     - The post must have field pasty and field dl
     -- pasty=File to upload
