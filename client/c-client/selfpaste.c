@@ -1,4 +1,4 @@
-/*
+/**
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the COMMON DEVELOPMENT AND DISTRIBUTION LICENSE
  * You should have received a copy of the
@@ -8,7 +8,7 @@
  * 2019 - 2020 https://://www.bananas-playground.net/projekt/selfpaste
  */
 
-/*
+/**
  * !WARNING!
  * This is a very simple, with limited experience written, c program.
  * Use at own risk and feel free to improve
@@ -22,13 +22,13 @@
 #include <pwd.h>
 #include <time.h>
 
-// https://curl.haxx.se
+/* https://curl.haxx.se */
 #include <curl/curl.h>
 
-// https://github.com/json-c/json-c
+/* https://github.com/json-c/json-c */
 #include <json-c/json.h>
 
-/*
+/**
  * Commandline arguments
  * see: https://www.gnu.org/software/libc/manual/html_node/Argp-Example-3.html#Argp-Example-3
  */
@@ -37,7 +37,7 @@ const char *argp_program_bug_address = "https://://www.bananas-playground.net/pr
 static char doc[] = "selfpaste. Upload given file to your selfpaste installation.";
 static char args_doc[] = "file";
 
-// The options we understand.
+/* The options we understand. */
 static struct argp_option options[] = {
     {"verbose",'v', 0, 0, "Produce verbose output" },
     {"quiet", 'q', 0, 0, "Don't produce any output" },
@@ -52,7 +52,7 @@ struct cmdArguments {
     char *output_file;
 };
 
-// Parse a single option.
+/* Parse a single option. */
 static error_t
 parse_opt (int key, char *arg, struct argp_state *state) {
     struct cmdArguments *arguments = state->input;
@@ -81,7 +81,7 @@ parse_opt (int key, char *arg, struct argp_state *state) {
 
         case ARGP_KEY_END:
           if (state->arg_num < 1 && arguments->create_config_file == 0)
-            // Not enough arguments.
+            /* Not enough arguments. */
             argp_usage (state);
         break;
 
@@ -94,7 +94,7 @@ parse_opt (int key, char *arg, struct argp_state *state) {
 
 static struct argp argp = { options, parse_opt, args_doc, doc };
 
-/*
+/**
  * Simple random string generation
  */
 const char availableChars[] = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-_";
@@ -109,7 +109,7 @@ char *randomString(int len) {
     return rstr;
 }
 
-/*
+/**
  * struct to hold the config options loaded from config file
  * Extend if the options file changes.
  */
@@ -118,7 +118,7 @@ struct configOptions {
     char *endpoint;
 };
 
-/*
+/**
  * struct to hold the returned data from the http post call
  * done with curl
  * see: https://curl.haxx.se/libcurl/c/getinmemory.html
@@ -128,7 +128,7 @@ struct MemoryStruct {
     size_t size;
 };
 
-/*
+/**
  * callback function from the curl call
  * see: https://curl.haxx.se/libcurl/c/getinmemory.html
  */
@@ -152,7 +152,7 @@ WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void *userp) {
     return realsize;
 }
 
-/*
+/**
  * make a post curl call to upload the given file
  * and receive the URL as a answer
  * see: https://curl.haxx.se/libcurl/c/getinmemory.html
@@ -163,25 +163,25 @@ int uploadCall(struct configOptions cfgo, struct cmdArguments arguments) {
 
     struct MemoryStruct chunk;
 
-    chunk.memory = malloc(1);  // will be grown as needed by the realloc above
-    chunk.size = 0;    // no data at this point
+    chunk.memory = malloc(1);  /* will be grown as needed by the realloc above */
+    chunk.size = 0;    /* no data at this point */
 
     curl_global_init(CURL_GLOBAL_ALL);
 
-    // init the curl session
+    /* init the curl session */
     curl_handle = curl_easy_init();
-    // specify URL to get
+    /* specify URL to get */
     curl_easy_setopt(curl_handle, CURLOPT_URL, cfgo.endpoint);
-    // send all data to this function
+    /* send all data to this function */
     curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
-    // we pass our 'chunk' struct to the callback function
+    /* we pass our 'chunk' struct to the callback function */
     curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&chunk);
-    // some servers don't like requests that are made without a user-agent
-    // field, so we provide one
+    /* some servers don't like requests that are made without a user-agent */
+    /* field, so we provide one */
     curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, "selfpaseCurlAgent/1.0");
 
-    // add the POST data
-    // // https://curl.haxx.se/libcurl/c/postit2.html
+    /* add the POST data */
+    /* https://curl.haxx.se/libcurl/c/postit2.html */
     curl_mime *form = NULL;
     curl_mimepart *field = NULL;
 
@@ -196,11 +196,10 @@ int uploadCall(struct configOptions cfgo, struct cmdArguments arguments) {
 
     curl_easy_setopt(curl_handle, CURLOPT_MIMEPOST, form);
 
-
-    // execute it!
+    /* execute it! */
     res = curl_easy_perform(curl_handle);
 
-    // check for errors
+    /* check for errors */
     if(res != CURLE_OK || chunk.size < 1) {
         printf("ERROR: curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
         exit(1);
@@ -213,7 +212,7 @@ int uploadCall(struct configOptions cfgo, struct cmdArguments arguments) {
         if(arguments.verbose) printf("%lu bytes retrieved\n", (unsigned long)chunk.size);
         if(arguments.verbose) printf("CURL returned:\n%s\n", chunk.memory);
 
-        // https://gist.github.com/leprechau/e6b8fef41a153218e1f4
+        /* https://gist.github.com/leprechau/e6b8fef41a153218e1f4 */
         json = json_tokener_parse_verbose(chunk.memory, &jerr);
         if (jerr == json_tokener_success) {
             jsonWork = json_object_object_get(json, "status");
@@ -227,7 +226,7 @@ int uploadCall(struct configOptions cfgo, struct cmdArguments arguments) {
         }
     }
 
-    // cleanup curl stuff
+    /* cleanup curl stuff  */
     curl_easy_cleanup(curl_handle);
     curl_mime_free(form);
     free(chunk.memory);
@@ -237,15 +236,13 @@ int uploadCall(struct configOptions cfgo, struct cmdArguments arguments) {
 }
 
 
-
-
-/*
+/**
  * main routine
  */
 int main(int argc, char *argv[]) {
 	srand(time(NULL));
 
-    /*
+    /**
      * command line argument parsing and default values
      */
     struct cmdArguments arguments;
@@ -267,7 +264,7 @@ int main(int argc, char *argv[]) {
         );
     }
 
-    /*
+    /**
      * Config file check.
      * Also create if non is available and command line option
      * to create it is set.
@@ -295,7 +292,7 @@ int main(int argc, char *argv[]) {
         if(arguments.verbose) printf("Using configfile: '%s'\n", configFilePath);
         if(arguments.create_config_file == 1) {
             printf("INFO: Re creating configfile by manually deleting it.\n");
-            exit(1);
+            return(1);
         }
     } else {
         printf("ERROR: Configfile '%s' not found.\n",configFilePath);
@@ -312,7 +309,7 @@ int main(int argc, char *argv[]) {
                 fclose(fp);
 
                 printf("Config file '%s' created.\nPlease update your settings!\n", configFilePath);
-                exit(0);
+                return(0);
             }
             else {
                 printf("ERROR: Configfile '%s' could not be written.\n",configFilePath);
@@ -321,7 +318,7 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    /*
+    /**
      * Reading and parsing the config file.
      * populate configOptions struct
      *
@@ -334,7 +331,7 @@ int main(int argc, char *argv[]) {
     FILE* fp;
     if ((fp = fopen(configFilePath, "r")) == NULL) {
         printf("ERROR: Configfile '%s' could not be opened.\n",configFilePath);
-        exit(1);
+        return(1);
     }
     if(arguments.verbose) printf("Reading configfile: '%s'\n", configFilePath);
     char line[128];
@@ -343,7 +340,7 @@ int main(int argc, char *argv[]) {
         if(arguments.verbose) printf("- Line: %s", line);
         if (line[0] == '#') continue;
 
-        // important. strok modifies the string it works with
+        /* important. strok modifies the string it works with */
         workwith = strdup(line);
 
         optKey = strtok(workwith, "=");
@@ -366,7 +363,7 @@ int main(int argc, char *argv[]) {
             arguments.args[0]);
     }
 
-    // do the upload
+    /* do the upload */
     uploadCall(configOptions, arguments);
 
     return(0);
