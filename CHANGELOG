@@ -1,5 +1,7 @@
 YYYYMMDD version 1.1 Boron
 * house cleaning
+* added a simple web client
+* cleaned up the linux client written in c. See README for more details
 
 20200426 version 1.0 Beryllium
 * final 1.0 working version
