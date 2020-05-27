@@ -32,7 +32,7 @@
  * Commandline arguments
  * see: https://www.gnu.org/software/libc/manual/html_node/Argp-Example-3.html#Argp-Example-3
  */
-const char *argp_program_version = "1.0";
+const char *argp_program_version = "1.1";
 const char *argp_program_bug_address = "https://://www.bananas-playground.net/projekt/selfpaste";
 static char doc[] = "selfpaste. Upload given file to your selfpaste installation.";
 static char args_doc[] = "file";
@@ -41,7 +41,6 @@ static char args_doc[] = "file";
 static struct argp_option options[] = {
     {"verbose",'v', 0, 0, "Produce verbose output" },
     {"quiet", 'q', 0, 0, "Don't produce any output" },
-    {"output", 'o', "FILE", 0, "Output to FILE instead of standard output" },
     {"create-config-file", 'c', 0, 0, "Create default config file" },
     { 0 }
 };
@@ -49,7 +48,6 @@ static struct argp_option options[] = {
 struct cmdArguments {
     char *args[1];
     int quiet, verbose, create_config_file;
-    char *output_file;
 };
 
 /* Parse a single option. */
@@ -63,9 +61,6 @@ parse_opt (int key, char *arg, struct argp_state *state) {
         break;
         case 'v':
             arguments->verbose = 1;
-        break;
-        case 'o':
-            arguments->output_file = arg;
         break;
         case 'c':
             arguments->create_config_file = 1;
@@ -248,16 +243,16 @@ int main(int argc, char *argv[]) {
     struct cmdArguments arguments;
     arguments.quiet = 0;
     arguments.verbose = 0;
-    arguments.output_file = "-";
     arguments.create_config_file = 0;
 
     argp_parse (&argp, argc, argv, 0, 0, &arguments);
 
     if(arguments.verbose) {
-        printf ("File = %s\nOutputfile = %s\n"
-            "Verbose = %s\nQuiet = %s\n",
+        printf ("File = %s\n"
+            "Verbose = %s\n"
+            "Quiet = %s\n"
+            "Create config file = %s\n",
             arguments.args[0],
-            arguments.output_file,
             arguments.verbose ? "yes" : "no",
             arguments.quiet ? "yes" : "no",
             arguments.create_config_file ? "yes" : "no"
