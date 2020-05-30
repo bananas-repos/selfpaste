@@ -1,0 +1,16 @@
+This is a client written in C for Windows to be used with selfpaste
+https://://www.bananas-playground.net/projekt/selfpaste
+
+It uses: 
+- https://www.argtable.org : Argument parsing (argtable-3.1.5-amalgamation)
+- https://github.com/curl/curl-for-win : Pre build curl dependencies (curl-7.70.0-win64-mingw and openssl-1.1.1g-win64-mingw)
+- https://github.com/DaveGamble/cJSON : JSON handling (cJSON-1.7.13)
+
+!WARNING!
+This is a very simple, with limited experience written, windows C program.
+Use at own risk and feel free to improve.
+
+Howto build:
+- gcc from https://jmeubank.github.io/tdm-gcc/ (build with tdm64-gcc-9.2.0)
+Run the makefile.bat in a cmd terminal. 
+Resulting selfpaste.exe and needed dll are in bin/ directory.
