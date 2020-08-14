@@ -5,6 +5,9 @@ make sure you change ENDPOINT and SELFPASTE_UPLOAD_SECRET.
 A C client is available to be build with makefile. Build and see included
 help for more information.
 
+A C client for windows is also available can be build with the provided
+information in the right folder.
+
 Requirements to create a new client are:
 
     - Talk to the selfpaste endpoint over HTTP(S) (your choice)

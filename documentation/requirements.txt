@@ -3,4 +3,7 @@ Apache >= 2.4
 - mod_deflate
 - mod_rewrite
 - htaccess support AllowOverride All
-Bash, curl and jq for included bash client
+
+Bash, curl and jq for included bash client.
+
+More dependencies for each client can be found in the individual readmes.

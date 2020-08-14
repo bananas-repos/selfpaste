@@ -4,7 +4,7 @@ This tool uses PHP fileinfo: https://www.php.net/manual/en/intro.fileinfo.php
 > by looking for certain magic byte sequences at specific positions within the file.
 > While this is not a bullet proof approach the heuristics used do a very good job.
 
-It is not really bullet proof, but it does the job. Everything can be manipulated
+It is not really bulletproof, but it does the job. Everything can be manipulated
 to look alike something it isn't.
 
 To expand or reduce the allowed filetypes, edit the SELFPASTE_ALLOWED_FILETYPES string to your needs.
