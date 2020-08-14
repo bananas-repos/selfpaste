@@ -1,2 +1,2 @@
-Linux client written in C. Can be build with the added Makefile for linux
+Linux client written in C. Can be build with the added Makefile for linux.
 Depends on libcurl (+ssl) https://curl.haxx.se and json-c https://github.com/json-c/json-c

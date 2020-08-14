@@ -12,5 +12,5 @@ Use at own risk and feel free to improve.
 
 Howto build:
 - gcc from https://jmeubank.github.io/tdm-gcc/ (build with tdm64-gcc-9.2.0)
-Run the makefile.bat in a cmd terminal. 
-Resulting selfpaste.exe and needed dll are in bin/ directory.
+- Run the makefile.bat in a cmd terminal. 
+- Resulting selfpaste.exe and needed dlls are in bin/ directory.

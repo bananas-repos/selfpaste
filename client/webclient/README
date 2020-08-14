@@ -1,7 +1,7 @@
 The webclient provides a simple web client to add pasties on the go when no client is available.
 It is a simple basic auth protected script which will then add the new pasty to your installation.
 
-To enable the webclient read the details in the index.php and config.default. file.
+To enable the webclient read the details in the index.php and config.default.php file.
 Copy config.default.php to config.php and provide a username, password, secret and the selfpaste endpoint url.
 
 Upload it where you want it and go.

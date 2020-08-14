@@ -18,7 +18,7 @@
  * rename this file into a php file and create a cronjob which executes this file as
  * php cli command
  *
- * example runs very sunday : 0 0 * * 0 php /path/to/this/file.php
+ * example runs every sunday : 0 0 * * 0 php /path/to/this/file.php
  *
  * you need to change PATH_TO_MANCUBUS_CLASS to find the required PHP class
  */
