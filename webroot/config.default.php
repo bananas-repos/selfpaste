@@ -26,7 +26,7 @@ define('LOG_CREATION',true);
 define('SELFPASTE_UPLOAD_DIR','pasties');
 # those are the allowed file types.
 # Make sure you read the README and documentation!
-define('SELFPASTE_ALLOWED_FILETYPES','text/plain,text/comma-separated-values,text/css,text/xml,text/x-php,text/x-perl,text/x-shellscript,text/html,text/javascript,text/c-x');
+define('SELFPASTE_ALLOWED_FILETYPES','text/plain,text/comma-separated-values,text/css,text/xml,text/x-php,text/x-perl,text/x-shellscript,text/html,text/javascript,text/c-x,text/x-makefile');
 # this is your domain and path on which selfpaste is accessible
 # needed to respond with the correct link for your paste
 # please NO / at the end

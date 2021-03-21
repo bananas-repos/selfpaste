@@ -18,7 +18,7 @@
 define('FRONTEND_USERNAME','some');
 /* please provide a unique password for this installation */
 define('FRONTEND_PASSWORD', 'admin');
-/* please provide a unique secret for this installation and add this to the allowed ones*/
+/* please provide a unique secret for this installation and add this to the allowed of your selfpase installation ones*/
 define('THE_SECRET','your super duper secret');
 /* the selfpaste installation endpoint url. Absolute or relative */
 define('THE_ENDPOINT','http://www.some.tld/path/to/selfpaste/index.php');
