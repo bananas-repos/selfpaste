@@ -79,6 +79,14 @@ if(!empty($_short)) {
     $_requestFile .= $_p;
     $_requestFile .= $_t;
     if(is_readable($_requestFile)) {
+
+    	$finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mime = finfo_file($finfo, $_requestFile);
+        finfo_close($finfo);
+        if(strstr($mime,'image/')) {
+            $contentType = "Content-type: $mime;";
+        }
+
         $contentBody = $_requestFile;
         $httpResponseCode = 200;
     }
