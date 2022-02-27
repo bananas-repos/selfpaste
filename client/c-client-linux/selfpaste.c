@@ -5,7 +5,7 @@
  * COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0
  * along with this program.  If not, see http://www.sun.com/cddl/cddl.html
  *
- * 2019 - 2020 https://://www.bananas-playground.net/projekt/selfpaste
+ * 2019 - 2022 https://://www.bananas-playground.net/projekt/selfpaste
  */
 
 /**
@@ -33,7 +33,7 @@
  * see: https://www.gnu.org/software/libc/manual/html_node/Argp-Example-3.html#Argp-Example-3
  */
 const char *argp_program_version = "1.1";
-const char *argp_program_bug_address = "https://://www.bananas-playground.net/projekt/selfpaste";
+const char *argp_program_bug_address = "https://www.bananas-playground.net/projekt/selfpaste";
 static char doc[] = "selfpaste. Upload given file to your selfpaste installation.";
 static char args_doc[] = "file";
 
@@ -300,7 +300,7 @@ int main(int argc, char *argv[]) {
                 fprintf(fp, "# See %s for more details.\n", argp_program_bug_address);
                 fprintf(fp, "# Version: %s\n", argp_program_version);
                 fprintf(fp, "SELFPASTE_UPLOAD_SECRET=%s\n", randomString(50));
-                fputs("ENDPOINT=http://you-seflpaste-endpoi.nt\n", fp);
+                fputs("ENDPOINT=http://your-seflpaste-endpoi.nt\n", fp);
                 fclose(fp);
 
                 printf("Config file '%s' created.\nPlease update your settings!\n", configFilePath);
