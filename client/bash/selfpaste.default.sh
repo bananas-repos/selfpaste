@@ -18,7 +18,7 @@ if [ $# -lt 1 ]; then
 fi;
 
 ENDPOINT="http://your.tld/selfpaste/webroot/";
-SELFPASTE_UPLOAD_SECRET="PLEASE CHANGE YOUR SECRET TO SOMTHING";
+SELFPASTE_UPLOAD_SECRET="PLEASE CHANGE YOUR SECRET";
 
 FILENAME="$1";
 
@@ -38,6 +38,6 @@ if [[ -r $FILENAME  ]]; then
     exit 4;
   fi;
 else
-  echo "Provided file is not accessable."
+  echo "Provided file is not accessible."
   exit 3;
 fi;

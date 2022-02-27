@@ -33,7 +33,7 @@
  * see: https://www.gnu.org/software/libc/manual/html_node/Argp-Example-3.html#Argp-Example-3
  */
 const char *argp_program_version = "1.1";
-const char *argp_program_bug_address = "https://://www.bananas-playground.net/projekt/selfpaste";
+const char *argp_program_bug_address = "https://www.bananas-playground.net/projekt/selfpaste";
 static char doc[] = "selfpaste. Upload given file to your selfpaste installation.";
 static char args_doc[] = "file";
 
