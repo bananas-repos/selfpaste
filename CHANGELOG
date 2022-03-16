@@ -1,9 +1,14 @@
+20220316 version 1.4 Oxygen
+* Using some more "default" branch names
+* New client added: Go client
+* Cleanups
+
 202100321 version 1.3 Nitrogen
 * Added new default allowed file types
 * Cleanups
 
 20200814 version 1.2 Carbon
-* Cleanup version only. No new fetures
+* Cleanup version only. No new features
 
 20200530 version 1.1 Boron
 * House cleaning

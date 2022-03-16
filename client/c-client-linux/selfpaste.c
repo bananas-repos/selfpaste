@@ -5,7 +5,7 @@
  * COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0
  * along with this program.  If not, see http://www.sun.com/cddl/cddl.html
  *
- * 2019 - 2020 https://://www.bananas-playground.net/projekt/selfpaste
+ * 2019 - 2022 https://://www.bananas-playground.net/projekt/selfpaste
  */
 
 /**
@@ -33,21 +33,20 @@
  * see: https://www.gnu.org/software/libc/manual/html_node/Argp-Example-3.html#Argp-Example-3
  */
 const char *argp_program_version = "1.1";
-const char *argp_program_bug_address = "https://://www.bananas-playground.net/projekt/selfpaste";
+const char *argp_program_bug_address = "https://www.bananas-playground.net/projekt/selfpaste";
 static char doc[] = "selfpaste. Upload given file to your selfpaste installation.";
 static char args_doc[] = "file";
 
 /* The options we understand. */
 static struct argp_option options[] = {
     {"verbose",'v', 0, 0, "Produce verbose output" },
-    {"quiet", 'q', 0, 0, "Don't produce any output" },
     {"create-config-file", 'c', 0, 0, "Create default config file" },
     { 0 }
 };
 
 struct cmdArguments {
     char *args[1];
-    int quiet, verbose, create_config_file;
+    int verbose, create_config_file;
 };
 
 /* Parse a single option. */
@@ -56,9 +55,6 @@ parse_opt (int key, char *arg, struct argp_state *state) {
     struct cmdArguments *arguments = state->input;
 
     switch (key) {
-        case 'q':
-            arguments->quiet = 1;
-        break;
         case 'v':
             arguments->verbose = 1;
         break;
@@ -173,7 +169,7 @@ int uploadCall(struct configOptions cfgo, struct cmdArguments arguments) {
     curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&chunk);
     /* some servers don't like requests that are made without a user-agent */
     /* field, so we provide one */
-    curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, "selfpaseCurlAgent/1.0");
+    curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, "selfpasteAgent/1.0");
 
     /* add the POST data */
     /* https://curl.haxx.se/libcurl/c/postit2.html */
@@ -241,7 +237,6 @@ int main(int argc, char *argv[]) {
      * command line argument parsing and default values
      */
     struct cmdArguments arguments;
-    arguments.quiet = 0;
     arguments.verbose = 0;
     arguments.create_config_file = 0;
 
@@ -250,11 +245,9 @@ int main(int argc, char *argv[]) {
     if(arguments.verbose) {
         printf ("File = %s\n"
             "Verbose = %s\n"
-            "Quiet = %s\n"
             "Create config file = %s\n",
             arguments.args[0],
             arguments.verbose ? "yes" : "no",
-            arguments.quiet ? "yes" : "no",
             arguments.create_config_file ? "yes" : "no"
         );
     }
