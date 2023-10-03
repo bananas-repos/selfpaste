@@ -7,6 +7,7 @@ Update process is as follows:
 
 ## 1.4 Oxygen
 New syntax in config file. Switched from define() to const syntax.
+This change apply also to the included webclient
 Example:
 old: define('LOG_CREATION',true);
 new: const LOG_CREATION = true;

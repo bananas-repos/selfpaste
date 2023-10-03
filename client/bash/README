@@ -1,0 +1,4 @@
+Copy selfpaste.default.sh to selfpase.sh
+Open in edit mode and change the two values to match with your selfpaste installation
+ENDPOINT="http://your.tld/selfpaste/webroot/";
+SELFPASTE_UPLOAD_SECRET="PLEASE CHANGE YOUR SECRET";
