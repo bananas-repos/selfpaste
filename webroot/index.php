@@ -1,41 +1,46 @@
 <?php
 /**
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the COMMON DEVELOPMENT AND DISTRIBUTION LICENSE
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * You should have received a copy of the
- * COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0
- * along with this program.  If not, see http://www.sun.com/cddl/cddl.html
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * 2019 - 2020 https://://www.bananas-playground.net/projekt/selfpaste
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see http://www.gnu.org/licenses/gpl-3.0.
+ *
+ * 2019 - 2023 https://://www.bananas-playground.net/projekt/selfpaste
  */
 
 # global debug setting
-define('DEBUG',false);
+const DEBUG = false;
 
 # Encoding and error reporting setting
 mb_http_output('UTF-8');
 mb_internal_encoding('UTF-8');
-ini_set('error_reporting',-1); // E_ALL & E_STRICT
+error_reporting(-1); // E_ALL & E_STRICT
 
 # default time setting
 date_default_timezone_set('Europe/Berlin');
 
 # check request
-$_urlToParse = filter_var($_SERVER['QUERY_STRING'],FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
+$_urlToParse = filter_var($_SERVER['QUERY_STRING'],FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW);
 if(!empty($_urlToParse)) {
     if(preg_match('/[\p{C}\p{M}\p{Sc}\p{Sk}\p{So}\p{Zl}\p{Zp}]/u',$_urlToParse) === 1) {
         die('Malformed request. Make sure you know what you are doing.');
     }
 }
 
-define('ERROR_LOG_FILE','./logs/error.log');
-define('CREATE_LOG','./logs/create.log');
+const ERROR_LOG_FILE = './logs/error.log';
+const CREATE_LOG = './logs/create.log';
 
 # error reporting
 ini_set('log_errors',true);
-ini_set('error_log',ERROR_LOG_FILE);
-if(DEBUG === true) {
+if(DEBUG) {
     ini_set('display_errors',true);
 }
 else {
@@ -75,7 +80,7 @@ if(!empty($_short)) {
     $_t = Summoner::b64sl_unpack_id($_short);
     $_t = (string)$_t;
     $_p = Summoner::forwardslashStringToPath($_t);
-    $_requestFile = Summoner::endsWith(SELFPASTE_UPLOAD_DIR,'/') ? SELFPASTE_UPLOAD_DIR : SELFPASTE_UPLOAD_DIR.'/';
+    $_requestFile = str_ends_with(SELFPASTE_UPLOAD_DIR,'/') ? SELFPASTE_UPLOAD_DIR : SELFPASTE_UPLOAD_DIR.'/';
     $_requestFile .= $_p;
     $_requestFile .= $_t;
     if(is_readable($_requestFile)) {
