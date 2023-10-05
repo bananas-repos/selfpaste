@@ -1,4 +1,4 @@
-- version 1.5 Fluorine
+202310xx  version 1.5 Fluorine
 * Maintenance release. Updated requirements to current versions if possible
 * New syntax in config file. Switched from define() to const syntax.
   Use config.default.php as a template to update your config.
