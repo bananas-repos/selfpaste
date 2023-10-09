@@ -1,11 +1,11 @@
-Unpack and move everything in the webroot folder to a webaccessable folder
+Unpack and move everything in the webroot folder to a web-accessible folder
 into your webserver.
 
 Rename config.default.php t config.php.
 
 Open config.php, read the comments and make your changes.
 
-For more information about some config settings read the seperate documentation
+For more information about some config settings read the separate documentation
 file for this setting.
 
 Folder logs and pasties need t be writeable by webserver process / owner

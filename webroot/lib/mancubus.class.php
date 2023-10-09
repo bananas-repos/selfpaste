@@ -1,13 +1,19 @@
 <?php
 /**
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the COMMON DEVELOPMENT AND DISTRIBUTION LICENSE
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * You should have received a copy of the
- * COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0
- * along with this program.  If not, see http://www.sun.com/cddl/cddl.html
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * 2019 - 2020 https://://www.bananas-playground.net/projekt/selfpaste
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see http://www.gnu.org/licenses/gpl-3.0.
+ *
+ * 2019 - 2023 https://://www.bananas-playground.net/projekt/selfpaste
  */
 
 /**
@@ -15,8 +21,18 @@
  */
 class Mancubus {
 
-    private $_uploadedData;
-    private $_short;
+    /**
+     * Content from $_FILES
+     * @var array
+     */
+    private array $_uploadedData;
+
+    /**
+     * The short id
+     * @var string
+     */
+    private string $_short;
+
     private $_saveFilename;
     private $_storagePath;
     private $_shortURL;
@@ -30,10 +46,11 @@ class Mancubus {
     /**
      * Requires a single upload from $_FILES
      * @see https://www.php.net/manual/en/features.file-upload.post-method.php
+     *
      * @param $file array
      * @return bool
      */
-    public function load($file) {
+    public function load(array $file): bool {
         $ret = false;
 
         if(isset($file['name'])
@@ -52,9 +69,11 @@ class Mancubus {
     /**
      * Either set short to given string
      * or create from _saveFilename. In this case _saveFilename is a number
+     *
      * @param string $short
+     * @return void
      */
-    public function setShort($short='') {
+    public function setShort(string $short=''): void {
         if($short != '') {
             $this->_short = $short;
         }
@@ -66,15 +85,16 @@ class Mancubus {
     /**
      * Either set _saveFilename to given string
      * or create from a random number. In this case _short needs this as a base
+     *
      * @param string $string
-     * @throws Exception
+     * @return void
      */
-    public function setSaveFilename($string='') {
+    public function setSaveFilename(string $string=''): void {
         if($string != '') {
             $this->_saveFilename = $string;
         }
         else {
-            $r = random_int(1000, 9999);
+            $r = rand(1000, 9999);
             $this->_saveFilename = (string)$r;
         }
     }
@@ -82,9 +102,10 @@ class Mancubus {
     /**
      * Set _shortURL to given string
      * or create based on SELFPASTE_URL and _short
+     *
      * @param string $string
      */
-    public function setShortURL($string='') {
+    public function setShortURL(string $string=''): void {
         if($string != '') {
             $this->_shortURL = $string;
         }
@@ -96,8 +117,10 @@ class Mancubus {
     /**
      * set the right storage path based on _saveFilename
      * and SELFPASTE_UPLOAD_DIR
+     *
+     * @return void
      */
-    public function setStoragePath() {
+    public function setStoragePath(): void {
         $string = $this->_saveFilename;
 
         if(!empty($string)) {
@@ -110,9 +133,10 @@ class Mancubus {
     /**
      * After setting importing stuff process the upload
      * return status and message
+     *
      * @return array
      */
-    public function process() {
+    public function process(): array {
         $ret = array(
             'message' => '',
             'status' => false
@@ -136,19 +160,22 @@ class Mancubus {
 
     /**
      * Cleans lifetime and floodfiles.
-     * @param boolean
+     *
+     * @param bool $verbose
+     * @return void
      */
-    public function cleanupCronjob($verbose=false) {
+    public function cleanupCronjob(bool $verbose=false): void {
         $this->_cleanupFloodFiles($verbose);
         $this->_checkLifetime($verbose);
     }
 
     /**
      * Check if the POST upload worked
+     *
      * @return array message,status
      * @throws Exception
      */
-    private function _checkFileUploadStatus() {
+    private function _checkFileUploadStatus(): array {
         $check = Summoner::checkFileUploadStatus($this->_uploadedData['error']);
 
         if($check['status'] === true) {
@@ -162,10 +189,11 @@ class Mancubus {
 
     /**
      * Check if the uploaded file matches the allowed filetypes
+     *
      * @return array message,status
      * @throws Exception
      */
-    private function _checkAllowedFiletype() {
+    private function _checkAllowedFiletype(): array {
         $message = "Filetype not supported";
         $status = false;
 
@@ -174,7 +202,7 @@ class Mancubus {
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
             $mime = finfo_file($finfo, $workWith);
             finfo_close($finfo);
-            if(strpos(SELFPASTE_ALLOWED_FILETYPES,$mime) !== false) {
+            if(str_contains(SELFPASTE_ALLOWED_FILETYPES, $mime)) {
                 $status = true;
                 $message = "Filetype allowed";
             }
@@ -195,10 +223,11 @@ class Mancubus {
     /**
      * check if SELFPASTE_UPLOAD_DIR and _storagePath
      * is creatable. If so create _storagePath
-     * @return array
+     *
+     * @return array message,status
      * @throws Exception
      */
-    private function _checkStorage() {
+    private function _checkStorage(): array {
         $message = "File storage failure";
         $status = false;
 
@@ -226,10 +255,11 @@ class Mancubus {
     /**
      * Move the tmp_file from _uploadedData to the new location
      * provided by _storagePath and _saveFilename
-     * @return array
+     *
+     * @return array message,status
      * @throws Exception
      */
-    private function _moveUploadedFile() {
+    private function _moveUploadedFile(): array {
         $message = "File storage failure";
         $status = false;
 
@@ -237,7 +267,7 @@ class Mancubus {
         $workwithFilename = $this->_saveFilename;
 
         if(!empty($workwithPath) && !empty($workwithFilename)) {
-            $_newFilename = Summoner::endsWith($workwithPath,'/') ? $workwithPath : $workwithPath.'/';
+            $_newFilename = str_ends_with($workwithPath,'/') ? $workwithPath : $workwithPath.'/';
             $_newFilename .= $workwithFilename;
             if(move_uploaded_file($this->_uploadedData['tmp_name'], $_newFilename)) {
                 $status = true;
@@ -261,10 +291,11 @@ class Mancubus {
     /**
      * check if the current paste request is within limits
      * for this check if the file exists. If so just return the shortURL
-     * @return array
+     *
+     * @return array message,status
      * @throws Exception
      */
-    private function _checkFlood() {
+    private function _checkFlood(): array {
         $message = "Failing flood requirements";
         $status = false;
 
@@ -299,12 +330,14 @@ class Mancubus {
 
     /**
      * clean up the flood tmp files. Everything older then 30 sec will be deleted.
+     *
+     * @param bool $verbose
      */
-    private function _cleanupFloodFiles($verbose=false) {
+    private function _cleanupFloodFiles(bool $verbose=false): void {
         $iterator = new DirectoryIterator(SELFPASTE_UPLOAD_DIR);
         $now = time();
         foreach ($iterator as $file) {
-            if($file->isDot() || $file->isDir() || Summoner::startsWith($file->getFilename(),'.')) continue;
+            if($file->isDot() || $file->isDir() || str_starts_with($file->getFilename(),'.')) continue;
             if ($now - $file->getCTime() >= SELFPASTE_FLOOD_LIFETIME) {
                 if($verbose === true) echo "Delete ".$file->getFilename()."\n";
                 unlink(SELFPASTE_UPLOAD_DIR.'/'.$file->getFilename());
@@ -314,15 +347,17 @@ class Mancubus {
 
     /**
      * delete all pastes older than SELFPASTE_PASTE_LIFETIME
+     *
+     * @param bool $verbose
      */
-    private function _checkLifetime($verbose=false) {
+    private function _checkLifetime(bool $verbose=false): void {
         $iterator = new RecursiveDirectoryIterator(SELFPASTE_UPLOAD_DIR);
         $datepointInThePastInSec = strtotime('-'.SELFPASTE_PASTE_LIFETIME.' days');
 
         foreach (new RecursiveIteratorIterator($iterator) as $file) {
             $fname = $file->getFilename();
             if($file->isDir()
-                || Summoner::startsWith($file->getFilename(),'.')
+                || str_starts_with($file->getFilename(),'.')
                 || isset($fname[4])
             ) continue;
             if ($file->getMTime() <= $datepointInThePastInSec) {

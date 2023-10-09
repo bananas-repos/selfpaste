@@ -5,6 +5,12 @@ Update process is as follows:
 - update your config.php
 - make sure of any special update steps listed below.
 
+## 1.5 Fluorine
+New syntax in config file. Switched from define() to const syntax.
+This change apply also to the included webclient
+Example:
+old: define('LOG_CREATION',true);
+new: const LOG_CREATION = true;
 
 ## 0.4-beta Beryllium
 Update your config.php to reflect the following updates.

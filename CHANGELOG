@@ -1,3 +1,13 @@
+20231009 version 1.5 Fluorine
+* Maintenance release. Updated requirements to current versions if possible
+* New syntax in config file. Switched from define() to const syntax.
+  Use config.default.php as a template to update your config.
+* Update requirements for server and webclient code to PHP 8.1
+* Changes to webclient:
+  New syntax in config file. Switched from define() to const syntax.
+  Use config.default.php as a template to update your config.
+* Licence change to GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+
 20220316 version 1.4 Oxygen
 * Using some more "default" branch names
 * New client added: Go client

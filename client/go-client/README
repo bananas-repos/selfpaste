@@ -6,4 +6,5 @@ This is a very simple, with limited experience written, go program.
 Use at own risk and feel free to improve.
 
 Howto build:
-Nothing special, just go build -o selfpase
+Nothing special, just:
+go build -o selfpaste

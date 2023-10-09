@@ -1,2 +1,14 @@
 Linux client written in C. Can be build with the added Makefile for linux.
 Depends on libcurl (+ssl) https://curl.haxx.se and json-c https://github.com/json-c/json-c
+
+Gentoo:
+https://packages.gentoo.org/packages/net-misc/curl
+https://packages.gentoo.org/packages/dev-libs/json-c
+
+Fedora:
+https://packages.fedoraproject.org/pkgs/json-c/json-c-devel/
+https://packages.fedoraproject.org/pkgs/curl/libcurl-devel/
+
+Debian:
+https://packages.debian.org/search?keywords=libcurl4-openssl-dev
+https://packages.debian.org/search?keywords=json-c

@@ -1,28 +1,33 @@
 <?php
 /**
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the COMMON DEVELOPMENT AND DISTRIBUTION LICENSE
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * You should have received a copy of the
- * COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0
- * along with this program.  If not, see http://www.sun.com/cddl/cddl.html
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * 2019 - 2020 https://://www.bananas-playground.net/projekt/selfpaste
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see http://www.gnu.org/licenses/gpl-3.0.
+ *
+ * 2019 - 2023 https://://www.bananas-playground.net/projekt/selfpaste
  */
 
 /**
  * a static helper class
  */
 class Summoner {
+
     /**
      * validate the given string with the given type. Optional check the string
      * length
      *
      * @param string $input The string to check
      * @param string $mode How the string should be checked
-     * @param mixed $limit If int given the string is checked for length
-     *
-     * @return bool
+     * @param int $limit If int given the string is checked for length
      *
      * @see http://de.php.net/manual/en/regexp.reference.unicode.php
      * http://www.sql-und-xml.de/unicode-database/#pc
@@ -30,8 +35,10 @@ class Summoner {
      * the pattern replaces all that is allowed. the correct result after
      * the replace should be empty, otherwise are there chars which are not
      * allowed
+     *
+     * @return bool
      */
-    static function validate($input,$mode='text',$limit=false) {
+    static function validate(string $input, string $mode='text', int $limit=0): bool {
         // check if we have input
         $input = trim($input);
 
@@ -67,7 +74,7 @@ class Summoner {
                 // text without any whitespace and special chars
                 // but with Punctuation other
                 # http://www.sql-und-xml.de/unicode-database/po.html
-                $pattern = '/[\p{L}\p{N}\p{Po}\-]/u';
+                $pattern = '/[\p{L}\p{N}\p{Po}\-_]/u';
                 break;
 
             case 'digit':
@@ -79,7 +86,7 @@ class Summoner {
             case 'pageTitle':
                 // text with whitespace and without special chars
                 // but with Punctuation
-                $pattern = '/[\p{L}\p{N}\p{Po}\p{Z}\s-]/u';
+                $pattern = '/[\p{L}\p{N}\p{Po}\p{Z}\s\-_]/u';
                 break;
 
             # strange. the \p{M} is needed.. don't know why..
@@ -110,41 +117,13 @@ class Summoner {
     }
 
     /**
-     * check if a string starts with a given string
-     *
-     * @param string $haystack
-     * @param string $needle
-     * @return boolean
-     */
-    static function startsWith($haystack, $needle) {
-        $length = strlen($needle);
-        return (substr($haystack, 0, $length) === $needle);
-    }
-
-    /**
-     * check if a string ends with a given string
-     *
-     * @param string $haystack
-     * @param string $needle
-     * @return boolean
-     */
-    static function endsWith($haystack, $needle) {
-        $length = strlen($needle);
-        if ($length == 0) {
-            return true;
-        }
-
-        return (substr($haystack, -$length) === $needle);
-    }
-
-
-    /**
      * Simple helper to detect the $_FILES upload status
      * Expects the error value from $_FILES['error']
-     * @param $error
+     *
+     * @param int $error
      * @return array
      */
-    static function checkFileUploadStatus($error) {
+    static function checkFileUploadStatus(int $error): array {
         $message = "Unknown upload error";
         $status = false;
 
@@ -188,7 +167,7 @@ class Summoner {
      * @see https://www.jwz.org/base64-shortlinks/
      * @return string
      */
-    static function b64sl_pack_id($id) {
+    static function b64sl_pack_id(string $id): string {
         $id = intval($id);
         $ida = ($id > 0xFFFFFFFF ? $id >> 32 : 0);	// 32 bit big endian, top
         $idb = ($id & 0xFFFFFFFF);			// 32 bit big endian, bottom
@@ -205,10 +184,10 @@ class Summoner {
      * Decode a base64-encoded big-endian integer of up to 64 bits.
      *
      * @see https://www.jwz.org/base64-shortlinks/
-     * @param $id
-     * @return false|int|string|string[]
+     * @param string $id
+     * @return int
      */
-    static function b64sl_unpack_id($id) {
+    static function b64sl_unpack_id(string $id): int {
         $id = str_replace ('-', '+', $id);		// decode URL-unsafe "+" "/"
         $id = str_replace ('_', '/', $id);
         $id = base64_decode ($id);
@@ -222,10 +201,11 @@ class Summoner {
      * create based on the given string a path
      * each char in string is a dir
      * asdef -> a/s/d/e/f/
-     * @param $string
+     *
+     * @param string $string
      * @return string
      */
-    static function forwardslashStringToPath($string) {
+    static function forwardslashStringToPath(string $string): string {
         $ret = '';
         if(!empty($string)) {
             for ($i = 0; $i < strlen($string); $i++) {
