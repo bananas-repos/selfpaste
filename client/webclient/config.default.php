@@ -20,6 +20,9 @@
  * this is the config file for the webclient
  */
 
+const DEBUG = false;
+const TIMEZONE = 'Europe/Berlin';
+
 /* please provide a unique username for this installation */
 const FRONTEND_USERNAME = 'some';
 /* please provide a unique password for this installation */

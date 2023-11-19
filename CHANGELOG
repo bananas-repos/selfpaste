@@ -1,4 +1,7 @@
-yyyymmdd version x.x Neon
+yyyymmdd version 1.x Neon
+* Moved and added settings to config file. See update.txt
+* Better logging
+* Updated client/webclient
 
 20231009 version 1.5 Fluorine
 * Maintenance release. Updated requirements to current versions if possible
