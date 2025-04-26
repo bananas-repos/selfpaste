@@ -2,6 +2,7 @@ yyyymmdd version 1.x Neon
 * Moved and added settings to config file. See update.txt
 * Better logging
 * Updated client/webclient
+* Setting the correct mime type to responses for the browser. FF had a problem with images.
 
 20231009 version 1.5 Fluorine
 * Maintenance release. Updated requirements to current versions if possible

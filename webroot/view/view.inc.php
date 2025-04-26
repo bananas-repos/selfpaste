@@ -13,15 +13,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see http://www.gnu.org/licenses/gpl-3.0.
  *
- * 2019 - 2023 https://://www.bananas-playground.net/projekt/selfpaste
+ * 2019 - 2025 https://://www.bananas-playground.net/projekt/selfpaste
  */
-if (file_exists($contentBody)) {
+
+$_t = Summoner::b64sl_unpack_id($_short);
+$_t = (string)$_t;
+$_p = Summoner::forwardslashStringToPath($_t);
+$_requestFile = str_ends_with(SELFPASTE_UPLOAD_DIR,'/') ? SELFPASTE_UPLOAD_DIR : SELFPASTE_UPLOAD_DIR.'/';
+$_requestFile .= $_p;
+$_requestFile .= $_t;
+if(is_readable($_requestFile)) {
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mime = finfo_file($finfo, $_requestFile);
+    finfo_close($finfo);
+
+    http_response_code(200);
+    header('Content-type: '.$mime);
     header('Expires: 0');
     header('Cache-Control: must-revalidate');
     header('Pragma: public');
-    readfile($contentBody);
-    exit;
-}
-else {
-    echo $contentBody;
+    readfile($_requestFile);
+} else {
+    http_response_code(404);
+    header('Content-type: text/plain; charset=UTF-8');
+    $contentBody = 'File not found.';
 }

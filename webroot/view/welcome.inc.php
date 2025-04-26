@@ -13,8 +13,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see http://www.gnu.org/licenses/gpl-3.0.
  *
- * 2019 - 2023 https://://www.bananas-playground.net/projekt/selfpaste
+ * 2019 - 2025 https://://www.bananas-playground.net/projekt/selfpaste
  */
+header('Content-type: text/html; charset=UTF-8');
 ?>
 <!DOCTYPE HTML>
 <html lang="en">
