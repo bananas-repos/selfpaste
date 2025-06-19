@@ -1,7 +1,7 @@
 Unpack and move everything in the webroot folder to a web-accessible folder
 into your webserver.
 
-Rename config.default.php t config.php.
+Rename config.default.php to config.php.
 
 Open config.php, read the comments and make your changes.
 

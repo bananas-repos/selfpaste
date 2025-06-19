@@ -5,7 +5,7 @@ Update process is as follows:
 - update your config.php
 - make sure of any special update steps listed below.
 
-## x.x Neon
+## 1.6 Neon
 Moved and added settings to config file. See config.default.php
 Make sure to add (with default values):
 const DEBUG = false;

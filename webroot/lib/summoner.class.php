@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see http://www.gnu.org/licenses/gpl-3.0.
  *
- * 2019 - 2023 https://://www.bananas-playground.net/projekt/selfpaste
+ * 2019 - 2025 https://://www.bananas-playground.net/projekt/selfpaste
  */
 
 /**
@@ -165,6 +165,7 @@ class Summoner {
      * create a short string based on a integer
      *
      * @see https://www.jwz.org/base64-shortlinks/
+     * @param string $id
      * @return string
      */
     static function b64sl_pack_id(string $id): string {

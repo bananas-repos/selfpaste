@@ -1,4 +1,5 @@
-yyyymmdd version 1.x Neon
+20250619 version 1.6 Neon
+* Required PHP 8.3 now.
 * Moved and added settings to config file. See update.txt
 * Better logging
 * Updated client/webclient
