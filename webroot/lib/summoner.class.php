@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see http://www.gnu.org/licenses/gpl-3.0.
  *
- * 2019 - 2023 https://://www.bananas-playground.net/projekt/selfpaste
+ * 2019 - 2025 https://://www.bananas-playground.net/projekt/selfpaste
  */
 
 /**
@@ -165,6 +165,7 @@ class Summoner {
      * create a short string based on a integer
      *
      * @see https://www.jwz.org/base64-shortlinks/
+     * @param string $id
      * @return string
      */
     static function b64sl_pack_id(string $id): string {
@@ -213,5 +214,38 @@ class Summoner {
             }
         }
         return $ret;
+    }
+
+    /**
+     * Make the input more safe for logging
+     *
+     * @param mixed $input The array/string to be made more safe
+     * @return string
+     */
+    static function cleanForLog(mixed $input): mixed {
+        $input = var_export($input, true);
+        $input = preg_replace( "/[\t\n\r]/", " ", $input);
+        return addcslashes($input, "\000..\037\177..\377\\");
+    }
+
+    /**
+     * error_log with a dedicated destination
+     * Uses LOGFILE const
+     *
+     * @param string $msg The string to be written to the log
+     */
+    static function sysLog(string $msg): void {
+        error_log(date("c")." ".$msg."\n", 3, ERROR_LOG_FILE);
+    }
+
+    /**
+     * error_log with a dedicated destination
+     * Uses CREATE_LOG const
+     *
+     * @param string $msg
+     * @return void
+     */
+    static function createLog(string $msg): void {
+        error_log(date("c")." ".$msg."\n", 3, CREATE_LOG);
     }
 }

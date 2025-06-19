@@ -1,14 +1,14 @@
 Unpack and move everything in the webroot folder to a web-accessible folder
 into your webserver.
 
-Rename config.default.php t config.php.
+Rename config.default.php to config.php.
 
 Open config.php, read the comments and make your changes.
 
 For more information about some config settings read the separate documentation
 file for this setting.
 
-Folder logs and pasties need t be writeable by webserver process / owner
+Folder logs and pasties need to be writeable by webserver process / owner
 
-Change date_default_timezone_set in index.php if your timezone is
+Change TIMEZONE in config.php if your timezone is
 different to Europe/Berlin

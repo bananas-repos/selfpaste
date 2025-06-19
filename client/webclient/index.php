@@ -21,16 +21,15 @@
  * copy the config.default.php file to config.php and update its settings
  */
 
-const DEBUG = false;
-require_once 'config.php';
-
 # Encoding and error reporting setting
 mb_http_output('UTF-8');
 mb_internal_encoding('UTF-8');
 error_reporting(-1); // E_ALL & E_STRICT
 
+require_once 'config.php';
+
 # default time setting
-date_default_timezone_set('Europe/Berlin');
+date_default_timezone_set(TIMEZONE);
 
 # check request
 $_urlToParse = filter_var($_SERVER['QUERY_STRING'],FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW);
@@ -40,7 +39,7 @@ if(!empty($_urlToParse)) {
     }
 }
 ini_set('display_errors',false);
-if(DEBUG === true) {
+if(DEBUG) {
     ini_set('display_errors',true);
 }
 
@@ -146,7 +145,7 @@ function curlPostUploadCall(string $url,array $data, string $port=''): mixed {
         $ret = $do;
     }
     else {
-        error_log(var_export(curl_error($ch),true),3,'./sp-webclient.log');
+        error_log(var_export(curl_error($ch),true),3,'./selfpaste-webclient.log');
     }
 
     curl_close($ch);

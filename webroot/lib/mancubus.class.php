@@ -33,9 +33,9 @@ class Mancubus {
      */
     private string $_short;
 
-    private $_saveFilename;
-    private $_storagePath;
-    private $_shortURL;
+    private string $_saveFilename;
+    private string $_storagePath;
+    private string $_shortURL;
 
     /**
      * Mancubus constructor.

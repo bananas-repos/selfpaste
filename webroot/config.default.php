@@ -16,6 +16,18 @@
  * 2019 - 2023 https://://www.bananas-playground.net/projekt/selfpaste
  */
 
+# debug setting
+const DEBUG = false;
+
+# timezone settings
+const TIMEZONE = 'Europe/Berlin';
+
+# path settings
+const PATH_ABSOLUTE = '/www/htdocs/';
+const PATH_SYSTEMOUT = PATH_ABSOLUTE.'/logs';
+const ERROR_LOG_FILE = PATH_SYSTEMOUT.'/selfpaste-error.log';
+const CREATE_LOG = PATH_SYSTEMOUT.'/selfpaste-create.log';
+
 # this is your installation secret. Could be anything.
 # Think of it as a key. Change it often to avoid any abuse.
 # The description will be used in the log files

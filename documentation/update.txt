@@ -5,6 +5,19 @@ Update process is as follows:
 - update your config.php
 - make sure of any special update steps listed below.
 
+## 1.6 Neon
+Moved and added settings to config file. See config.default.php
+Make sure to add (with default values):
+const DEBUG = false;
+const TIMEZONE = 'Europe/Berlin';
+const PATH_ABSOLUTE = '/path/to/your/installation/';
+const PATH_SYSTEMOUT = PATH_ABSOLUTE.'/logs';
+const ERROR_LOG_FILE = PATH_SYSTEMOUT.'/selfpaste-error.log';
+const CREATE_LOG = PATH_SYSTEMOUT.'/selfpaste-create.log';
+
+Logfilenames changed. Existing create.log and error.log can be removed.
+
+
 ## 1.5 Fluorine
 New syntax in config file. Switched from define() to const syntax.
 This change apply also to the included webclient
